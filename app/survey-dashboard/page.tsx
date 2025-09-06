@@ -25,9 +25,20 @@ export default function SurveyDashboardPage() {
           return bt - at;
         });
         setSurveys(list);
-        if (list.length > 0) setSelectedSurvey(list[0]);
+        // Only auto-select when user is on assigned tab and there are assigned surveys
+        const assigned = (list.filter((s: any) => s.status !== "Completed" && (s.officerId || s.officerId === null)) || []).slice();
+        if (activeTab === 'assigned' && assigned.length > 0) {
+          setSelectedSurvey(assigned[0]);
+        } else {
+          setSelectedSurvey(null);
+        }
       });
-  }, []);
+  }, [activeTab]);
+
+  // Clear selection when assigned surveys become empty
+  useEffect(() => {
+    if (assignedSurveys.length === 0) setSelectedSurvey(null)
+  }, [assignedSurveys.length])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-sky-50 flex items-stretch overflow-auto relative">
@@ -121,17 +132,33 @@ export default function SurveyDashboardPage() {
 
               {/* Details */}
               <div className="col-span-1">
-                <div className="bg-white/90 backdrop-blur p-6 rounded-2xl shadow-xl border">
-                  <SurveyDetails survey={selectedSurvey} />
-                </div>
+                {selectedSurvey ? (
+                  <div className="bg-white/90 backdrop-blur p-6 rounded-2xl shadow-xl border">
+                    <SurveyDetails survey={selectedSurvey} />
+                  </div>
+                ) : (
+                  <div className="bg-white/90 backdrop-blur p-6 rounded-2xl shadow-xl border flex items-center justify-center text-gray-400">
+                    <div className="text-center">
+                      <p className="font-medium">No survey selected</p>
+                      <p className="text-sm">Select an item from your queue to view details</p>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Actions */}
               <div className="col-span-1 space-y-4">
-                <div className="bg-white/90 backdrop-blur p-5 rounded-2xl shadow-lg border">
-                  <h4 className="font-semibold text-lg mb-3">Survey Actions</h4>
-                  <SurveyForm survey={selectedSurvey} refresh={() => window.location.reload()} />
-                </div>
+                {selectedSurvey ? (
+                  <div className="bg-white/90 backdrop-blur p-5 rounded-2xl shadow-lg border">
+                    <h4 className="font-semibold text-lg mb-3">Survey Actions</h4>
+                    <SurveyForm survey={selectedSurvey} refresh={() => window.location.reload()} />
+                  </div>
+                ) : (
+                  <div className="bg-white/90 backdrop-blur p-6 rounded-2xl shadow-lg border text-gray-500">
+                    <p className="font-medium mb-2">No actions available</p>
+                    <p className="text-sm">When you select a survey from the queue you will be able to submit a report and attachments.</p>
+                  </div>
+                )}
                 <div className="bg-gradient-to-r from-indigo-50 to-sky-50 p-4 rounded-xl border border-dashed border-sky-200 text-sm text-gray-600">
                   <strong>Quick tips:</strong>
                   <ul className="list-disc ml-5 mt-2 text-xs space-y-1">

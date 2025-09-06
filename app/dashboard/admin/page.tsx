@@ -24,7 +24,7 @@ interface Request {
   type: string
   reason: string
   amount?: number
-  status: "pending" | "approved" | "rejected"
+  status: "pending" | "approved" | "rejected" | "completed"
   submittedAt: string
   currentAddress: string
   cnicImage?: string
@@ -38,6 +38,13 @@ interface Request {
     address: string
   }
   forwardedToSurvey?: boolean
+  // survey-related fields (when mapping surveys -> request-like objects)
+  surveyStatus?: string
+  surveyStatusNormalized?: string
+  surveyRecommendation?: string | null
+  surveyReport?: string | null
+  surveyAttachments?: any[]
+  sentToAdmin?: boolean
 }
 
 interface AcceptedByDonorItem {
@@ -160,11 +167,19 @@ export default function AdminDashboard() {
                 },
                 type: app.type || '',
                 reason: app.reason || '',
+                // keep application status (pending/approved/rejected) separate
                 status: (app.status || '').toLowerCase(),
                 submittedAt: app.created_at || app.submittedAt,
                 currentAddress: app.user?.address || app.user_address || '',
                 additionalData: app,
                 verification_complete: app.verification_complete || false,
+                // include survey-specific fields so admin can see completed surveys
+                surveyStatus: s.status || '',
+                surveyStatusNormalized: (s.status || '').toLowerCase(),
+                surveyRecommendation: s.recommendation || null,
+                surveyReport: s.report || null,
+                surveyAttachments: s.attachments || [],
+                sentToAdmin: s.sentToAdmin || false,
               }
             })
             // Show newest forwarded surveys first
@@ -414,6 +429,8 @@ export default function AdminDashboard() {
         return <CheckCircle className="h-4 w-4" />
       case "rejected":
         return <XCircle className="h-4 w-4" />
+      case "completed":
+        return <CheckCircle className="h-4 w-4" />
       default:
         return <FileText className="h-4 w-4" />
     }
@@ -425,6 +442,8 @@ export default function AdminDashboard() {
         return "bg-yellow-100 text-yellow-800"
       case "approved":
         return "bg-green-100 text-green-800"
+      case "completed":
+        return "bg-emerald-100 text-emerald-800"
       case "rejected":
         return "bg-red-100 text-red-800"
       default:
@@ -438,6 +457,8 @@ export default function AdminDashboard() {
         return "bg-yellow-50"
       case "approved":
         return "bg-green-50"
+      case "completed":
+        return "bg-emerald-50"
       case "rejected":
         return "bg-red-50"
       default:
@@ -572,10 +593,14 @@ export default function AdminDashboard() {
                     <span className="text-sm font-medium text-gray-700">Accepted by Donors</span>
                     <Badge className="bg-slate-900 text-white text-xs px-2 py-0.5 rounded-full">{acceptedByDonors.length}</Badge>
                   </TabsTrigger>
-                  <div className="my-1 border-t" />
+				  <div className="my-1 border-t" />
                   <TabsTrigger value="survey-requests" className="w-full flex items-center justify-between py-3 px-3 rounded-md text-sm hover:bg-gray-50">
                     <span className="text-sm font-medium text-gray-700">Survey Requests</span>
                     <Badge className="bg-slate-900 text-white text-xs px-2 py-0.5 rounded-full">{surveyRequests.length}</Badge>
+                  </TabsTrigger>
+                  <TabsTrigger value="completed-surveys" className="w-full flex items-center justify-between py-3 px-3 rounded-md text-sm hover:bg-gray-50">
+                    <span className="text-sm font-medium text-gray-700">Completed Surveys</span>
+                    <Badge className="bg-emerald-700 text-white text-xs px-2 py-0.5 rounded-full">{surveyRequests.filter((s) => s.surveyStatusNormalized === "completed").length}</Badge>
                   </TabsTrigger>
 
                   <TabsTrigger value="donors" className="w-full flex items-center justify-between py-3 px-3 rounded-md text-sm hover:bg-gray-50">
@@ -611,6 +636,9 @@ export default function AdminDashboard() {
                   <TabsTrigger value="survey-requests" className="w-full text-left py-2 px-3 rounded-md text-sm bg-white">
                     Survey Requests <Badge className="ml-2">{surveyRequests.length}</Badge>
                   </TabsTrigger>
+                  <TabsTrigger value="completed-surveys" className="w-full text-left py-2 px-3 rounded-md text-sm bg-white">
+                    Completed Surveys <Badge className="ml-2">{surveyRequests.filter((s) => s.surveyStatusNormalized === "completed").length}</Badge>
+                  </TabsTrigger>
                   <TabsTrigger value="donors" className="w-full text-left py-2 px-3 rounded-md text-sm bg-white">
                     Donors <Badge className="ml-2">{donors.length}</Badge>
                   </TabsTrigger>
@@ -618,6 +646,35 @@ export default function AdminDashboard() {
                     All Requests <Badge className="ml-2">{filteredRequests.length}</Badge>
                   </TabsTrigger>
                 </TabsList>
+              {/* Completed Surveys Tab */}
+              <TabsContent value="completed-surveys">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Completed Surveys</CardTitle>
+                    <CardDescription>All surveys with submitted reports.</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    {surveyRequests.filter((s) => s.surveyStatusNormalized === "completed").length === 0 ? (
+                      <div className="text-center py-8">
+                        <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                        <p className="text-gray-600">No completed surveys yet.</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        {surveyRequests.filter((s) => s.surveyStatusNormalized === "completed").map((survey) => (
+                          <div key={survey.id} className="p-5 rounded-xl shadow-md bg-white/90 backdrop-blur border">
+                            <h3 className="font-semibold text-lg">{survey.user?.fullName || "Applicant"}</h3>
+                            <p className="text-sm text-gray-500 mb-2">CNIC: {survey.user?.cnic}</p>
+                            <p className="text-sm"><strong>Survey Status:</strong> <span className="bg-emerald-600 text-white px-2 py-0.5 rounded">{survey.surveyStatus}</span></p>
+                            <p className="text-sm"><strong>Recommendation:</strong> {survey.surveyRecommendation || "-"}</p>
+                            <p className="text-sm"><strong>Report:</strong> {survey.surveyReport || "-"}</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </TabsContent>
               </div>
 
               {/* Pending */}
@@ -931,6 +988,36 @@ export default function AdminDashboard() {
                             )}
                           </div>
                         )}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              {/* Completed Surveys (desktop content) */}
+              <TabsContent value="completed-surveys">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Completed Surveys</CardTitle>
+                    <CardDescription>All surveys with submitted reports.</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    {surveyRequests.filter((s) => s.surveyStatusNormalized === "completed").length === 0 ? (
+                      <div className="text-center py-8">
+                        <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                        <p className="text-gray-600">No completed surveys yet.</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        {surveyRequests.filter((s) => s.surveyStatusNormalized === "completed").map((survey) => (
+                          <div key={survey.id} className="p-5 rounded-xl shadow-md bg-white/90 backdrop-blur border">
+                            <h3 className="font-semibold text-lg">{survey.user?.fullName || "Applicant"}</h3>
+                            <p className="text-sm text-gray-500 mb-2">CNIC: {survey.user?.cnic}</p>
+                            <p className="text-sm"><strong>Survey Status:</strong> <span className="bg-emerald-600 text-white px-2 py-0.5 rounded">{survey.surveyStatus}</span></p>
+                            <p className="text-sm"><strong>Recommendation:</strong> {survey.surveyRecommendation || "-"}</p>
+                            <p className="text-sm"><strong>Report:</strong> {survey.surveyReport || "-"}</p>
+                          </div>
+                        ))}
                       </div>
                     )}
                   </CardContent>
