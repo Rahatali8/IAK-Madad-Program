@@ -3,11 +3,10 @@
 import { Heart, Phone, Mail, MapPin, Facebook, Twitter, Instagram, Youtube } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 
 export function Footer() {
   return (
-    <footer className="bg-gradient-to-br from-blue-900 via-blue-950 to-blue-800 text-white pt-10 pb-0">
+  <footer className="bg-darkblue text-white pt-10 pb-0">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Main Footer Content */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 py-8">
@@ -119,7 +118,7 @@ export function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-8 bg-gradient-to-r from-blue-950/80 via-blue-900/80 to-blue-800/80 rounded-t-xl shadow-inner border-t border-blue-800">
+  <div className="mt-8 bg-blue-800 rounded-t-xl shadow-inner border-t border-blue-700">
           <div className="flex flex-col md:flex-row justify-between items-center px-4 py-5">
             <p className="text-blue-100 text-xs md:text-sm">© 2024 Welfare Platform. All rights reserved.</p>
             <p className="text-blue-100 text-xs md:text-sm flex items-center gap-1">Made with <Heart className="inline h-4 w-4 text-red-400 mx-1" fill="#f87171" /> for the people of Pakistan</p>

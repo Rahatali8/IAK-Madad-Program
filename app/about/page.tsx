@@ -98,94 +98,68 @@ export default function AboutPage() {
       </main>
 
 
-      {/* Mission & Vision */}
-      <section className="py-10 px-2 sm:py-16 sm:px-4 m-2 sm:m-5">
-        <div className="container mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
+      {/* Mission & Vision - redesigned */}
+      <section className="py-12 px-4 sm:py-20 sm:px-8 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+            <div className="space-y-6">
+              <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900">Our Core <span className="text-cyan-600">Mission & Vision</span></h2>
+              <p className="text-lg text-slate-600 leading-relaxed">We provide comprehensive welfare services that empower individuals and families to achieve self-sufficiency, dignity, and prosperity. Our programs focus on sustainable solutions, community empowerment, and transparent operations.</p>
 
-            {/* Left Side Text */}
-            <div>
-              <h2 className="mb-4 sm:mb-6 text-2xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-darkblue drop-shadow-2xl">
-                Our Core <span className="text-lightblue">Mission</span>
-              </h2>
-              <p className="text-base sm:text-lg text-gray-600 mb-4 sm:mb-6 leading-relaxed">
-                To provide comprehensive welfare services that empower individuals and families to achieve
-                self-sufficiency, dignity, and prosperity. We believe in creating sustainable solutions that address
-                root causes of poverty and social challenges.
-              </p>
-              <div className="space-y-3 sm:space-y-4">
-                <div className="flex items-center space-x-2 sm:space-x-3">
-                  <div className="w-7 h-7 sm:w-8 sm:h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                    <Target className="h-4 w-4 text-lightblue" />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="flex items-start gap-3">
+                  <div className="flex-none w-10 h-10 rounded-lg bg-cyan-50 text-cyan-600 grid place-items-center">
+                    <Target className="w-5 h-5" />
                   </div>
-                  <span className="text-gray-700 text-sm sm:text-base">Holistic approach to welfare</span>
-                </div>
-                <div className="flex items-center space-x-2 sm:space-x-3">
-                  <div className="w-7 h-7 sm:w-8 sm:h-8 bg-green-100 rounded-full flex items-center justify-center">
-                    <Users className="h-4 w-4 text-green-600" />
+                  <div>
+                    <h4 className="text-sm font-semibold text-slate-800">Holistic Programs</h4>
+                    <p className="text-sm text-slate-600">Integrated services addressing root causes and immediate needs.</p>
                   </div>
-                  <span className="text-gray-700 text-sm sm:text-base">Community-centered solutions</span>
                 </div>
-                <div className="flex items-center space-x-2 sm:space-x-3">
-                  <div className="w-7 h-7 sm:w-8 sm:h-8 bg-purple-100 rounded-full flex items-center justify-center">
-                    <TrendingUp className="h-4 w-4 text-purple-600" />
+
+                <div className="flex items-start gap-3">
+                  <div className="flex-none w-10 h-10 rounded-lg bg-green-50 text-green-600 grid place-items-center">
+                    <Users className="w-5 h-5" />
                   </div>
-                  <span className="text-gray-700 text-sm sm:text-base">Sustainable development focus</span>
+                  <div>
+                    <h4 className="text-sm font-semibold text-slate-800">Community Focus</h4>
+                    <p className="text-sm text-slate-600">Working closely with communities to build sustainable capacity.</p>
+                  </div>
                 </div>
+
+                <div className="flex items-start gap-3">
+                  <div className="flex-none w-10 h-10 rounded-lg bg-violet-50 text-violet-600 grid place-items-center">
+                    <TrendingUp className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-semibold text-slate-800">Sustainable Impact</h4>
+                    <p className="text-sm text-slate-600">Programs designed for long-term measurable outcomes.</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <div className="flex-none w-10 h-10 rounded-lg bg-amber-50 text-amber-600 grid place-items-center">
+                    <Heart className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-semibold text-slate-800">Compassion & Care</h4>
+                    <p className="text-sm text-slate-600">We treat every person with dignity and empathy.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-4">
+                <Button size="lg" className="bg-cyan-600 hover:bg-cyan-700 text-white">Support Our Work</Button>
               </div>
             </div>
 
-            {/* Right Side Image Gallery */}
             <div className="grid grid-cols-2 gap-4">
-
-              {/* Image 1 → Small */}
-              <div className="relative group overflow-hidden rounded-xl shadow-lg">
-                <img
-                  src="/images/mission1.jpg"
-                  alt="Mission Image 1"
-                  className="w-full h-28 sm:h-32 md:h-36 object-cover transform transition-transform duration-500 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                  <span className="text-white font-semibold">Support</span>
-                </div>
-              </div>
-
-              {/* Image 2 → Large */}
-              <div className="relative group overflow-hidden rounded-xl shadow-lg">
-                <img
-                  src="/images/welfare-aged.png"
-                  alt="Welfare of Aged"
-                  className="w-full h-40 sm:h-48 md:h-52 object-cover transform transition-transform duration-500 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                  <span className="text-white font-semibold">Welfare</span>
-                </div>
-              </div>
-
-              {/* Image 3 → Large */}
-              <div className="relative group overflow-hidden rounded-xl shadow-lg">
-                <img
-                  src="/images/mission3.jpg"
-                  alt="Mission Image 3"
-                  className="w-full h-40 sm:h-48 md:h-52 object-cover transform transition-transform duration-500 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                  <span className="text-white font-semibold">Growth</span>
-                </div>
-              </div>
-
-              {/* Image 4 → Small */}
-              <div className="relative group overflow-hidden rounded-xl shadow-lg">
-                <img
-                  src="/images/mission4.jpg"
-                  alt="Mission Image 4"
-                  className="w-full h-28 sm:h-32 md:h-36 object-cover transform transition-transform duration-500 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                  <span className="text-white font-semibold">Hope</span>
-                </div>
-              </div>
-
+              {['/images/mission1.jpg','/images/welfare-aged.png','/images/mission3.jpg','/images/mission4.jpg'].map((src, i) => (
+                <figure key={i} className="relative overflow-hidden rounded-xl shadow-lg bg-white">
+                  <img src={src} alt={`mission-${i}`} className="w-full h-40 object-cover" />
+                  <figcaption className="p-3 text-xs text-slate-600">{i === 0 ? 'Support Programs' : i === 1 ? 'Welfare of Aged' : i === 2 ? 'Community Growth' : 'Hope & Opportunity'}</figcaption>
+                </figure>
+              ))}
             </div>
           </div>
         </div>

@@ -233,7 +233,6 @@ export default function SuccessStoriesPage() {
         <div className="container mx-auto">
           <div className="text-center mb-12">
             <h1 className="text-center font-bold text-5xl text-[#1B0073] pb-10">Featured Success <span className="text-[#00A5E0]">Stories</span></h1>
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Featured Success Stories</h2>
             <p className="text-xl text-gray-600">
               Meet the inspiring individuals who have transformed their lives through our programs
             </p>
