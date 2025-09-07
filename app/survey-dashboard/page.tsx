@@ -42,7 +42,7 @@ export default function SurveyDashboardPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-sky-50 flex items-stretch overflow-auto relative">
-      
+
       {/* Decorative blobs */}
       <div className="absolute top-10 left-10 w-60 h-60 bg-gradient-to-tr from-sky-200 via-indigo-200 to-rose-200 opacity-40 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-10 right-10 w-72 h-72 bg-gradient-to-bl from-amber-200 via-pink-200 to-sky-200 opacity-40 rounded-full blur-3xl pointer-events-none" />
@@ -64,7 +64,7 @@ export default function SurveyDashboardPage() {
         {/* Navigation */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="flex flex-col w-full space-y-3">
-            
+
             {/* Assigned */}
             <TabsTrigger
               value="assigned"
@@ -94,6 +94,15 @@ export default function SurveyDashboardPage() {
           </TabsList>
         </Tabs>
 
+        {/* Queue (moved here under the tabs) */}
+        <div className="mt-10">
+          <div className="bg-white/80 backdrop-blur rounded-xl shadow-lg border p-4">
+            <h3 className="text-lg font-bold mb-2">Your Queue</h3>
+            <p className="text-xs text-gray-400 mb-3">Newest first • {assignedSurveys.length} items</p>
+            <SurveyList surveys={assignedSurveys} selectedSurvey={selectedSurvey} onSelect={setSelectedSurvey} />
+          </div>
+        </div>
+
         {/* Divider + Tip */}
         <div className="mt-auto pt-6 border-t border-gray-200 text-center text-xs text-gray-500">
           💡 Tip: Refresh your queue regularly
@@ -119,25 +128,15 @@ export default function SurveyDashboardPage() {
               </button>
             </header>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              
-              {/* Queue */}
-              <div className="col-span-1">
-                <div className="bg-white/80 backdrop-blur rounded-xl shadow-lg border p-4">
-                  <h3 className="text-lg font-bold mb-2">Your Queue</h3>
-                  <p className="text-xs text-gray-400 mb-3">Newest first • {assignedSurveys.length} items</p>
-                  <SurveyList surveys={assignedSurveys} selectedSurvey={selectedSurvey} onSelect={setSelectedSurvey} />
-                </div>
-              </div>
-
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start w-full">
               {/* Details */}
               <div className="col-span-1">
                 {selectedSurvey ? (
-                  <div className="bg-white/90 backdrop-blur p-6 rounded-2xl shadow-xl border">
+                  <div className="bg-white/90 backdrop-blur p-6 rounded-2xl shadow-xl border h-full">
                     <SurveyDetails survey={selectedSurvey} />
                   </div>
                 ) : (
-                  <div className="bg-white/90 backdrop-blur p-6 rounded-2xl shadow-xl border flex items-center justify-center text-gray-400">
+                  <div className="bg-white/90 backdrop-blur p-6 rounded-2xl shadow-xl border flex items-center justify-center text-gray-400 h-full">
                     <div className="text-center">
                       <p className="font-medium">No survey selected</p>
                       <p className="text-sm">Select an item from your queue to view details</p>
@@ -149,12 +148,12 @@ export default function SurveyDashboardPage() {
               {/* Actions */}
               <div className="col-span-1 space-y-4">
                 {selectedSurvey ? (
-                  <div className="bg-white/90 backdrop-blur p-5 rounded-2xl shadow-lg border">
+                  <div className="bg-white/90 backdrop-blur p-5 rounded-2xl shadow-lg border h-full">
                     <h4 className="font-semibold text-lg mb-3">Survey Actions</h4>
                     <SurveyForm survey={selectedSurvey} refresh={() => window.location.reload()} />
                   </div>
                 ) : (
-                  <div className="bg-white/90 backdrop-blur p-6 rounded-2xl shadow-lg border text-gray-500">
+                  <div className="bg-white/90 backdrop-blur p-6 rounded-2xl shadow-lg border text-gray-500 h-full">
                     <p className="font-medium mb-2">No actions available</p>
                     <p className="text-sm">When you select a survey from the queue you will be able to submit a report and attachments.</p>
                   </div>
@@ -191,7 +190,6 @@ export default function SurveyDashboardPage() {
               )}
             </div>
           </TabsContent>
-
         </Tabs>
       </main>
     </div>

@@ -47,6 +47,15 @@ export async function POST(request: Request) {
   }
 
   // Update survey record (must now be assigned to officer)
+  // Normalize attachments: accept either array of strings or array of { url }
+  const normalizedAttachments: string[] = (attachments || []).map((a: any) => {
+    if (!a) return String(a);
+    if (typeof a === "string") return a;
+    if (typeof a === "object" && a.url) return a.url;
+    // fallback to string conversion
+    return String(a);
+  });
+
   const updatedSurvey = await db.survey.update({
     where: { id: surveyId },
     data: {
@@ -54,7 +63,7 @@ export async function POST(request: Request) {
       recommendation,
       report,
       updatedAt: new Date(),
-      attachments: { create: (attachments || []).map((url: string) => ({ url })) },
+      attachments: { create: normalizedAttachments.map((url) => ({ url })) },
     },
     include: { application: true, attachments: true },
   })

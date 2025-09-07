@@ -109,6 +109,7 @@ export default function AdminDashboard() {
   const [showAcceptedByDonorsCount, setShowAcceptedByDonorsCount] = useState(6)
   const [showAllCount, setShowAllCount] = useState(6)
   const [showDonorsCount, setShowDonorsCount] = useState(6)
+  const [showCompletedCount, setShowCompletedCount] = useState(5)
 
   const [expandedDonorRequests, setExpandedDonorRequests] = useState<{ [id: string]: boolean }>({});
   const handleToggleDonorRequest = (id: number) => {
@@ -190,6 +191,21 @@ export default function AdminDashboard() {
             })
             setSurveyRequests(surveys)
             // setSurveyReports(surveys.filter((s: any) => s.status === 'Completed' && s.sentToAdmin))
+            // Prune any stored readSurveyRequests that don't correspond to current completed surveys
+            try {
+              if (typeof window !== 'undefined') {
+                const raw = localStorage.getItem('readSurveyRequests')
+                if (raw) {
+                  const stored: number[] = JSON.parse(raw)
+                  const completedIds = surveys.filter((s: any) => (s.surveyStatusNormalized || '').toLowerCase() === 'completed').map((s: any) => Number(s.id))
+                  const next = stored.filter((id) => completedIds.includes(Number(id)))
+                  setReadSurveyRequests(next)
+                  localStorage.setItem('readSurveyRequests', JSON.stringify(next))
+                }
+              }
+            } catch (e) {
+              // ignore localStorage errors
+            }
           }
         } catch (e) {
           console.error('Failed to load surveys', e)
@@ -417,8 +433,21 @@ export default function AdminDashboard() {
       if (prev.includes(id)) return prev
       const next = [id, ...prev]
       try { localStorage.setItem('readSurveyRequests', JSON.stringify(next)) } catch { }
+      try {
+        toast({ title: 'Marked Done', description: 'Survey marked as donated.' })
+      } catch {}
       return next
     })
+  }
+
+  // helper to compare ids as strings to avoid type mismatches between stored values
+  const isSurveyRead = (id: number | string) => {
+    return readSurveyRequests.some((x) => String(x) === String(id))
+  }
+
+  const resetReadSurveyRequests = () => {
+    setReadSurveyRequests([])
+    try { localStorage.removeItem('readSurveyRequests') } catch { }
   }
 
   const getStatusIcon = (status: string) => {
@@ -653,25 +682,44 @@ export default function AdminDashboard() {
                     <CardTitle>Completed Surveys</CardTitle>
                     <CardDescription>All surveys with submitted reports.</CardDescription>
                   </CardHeader>
+                  <div className="px-4 pb-2">
+                    <Button size="sm" variant="ghost" onClick={resetReadSurveyRequests}>Reset New</Button>
+                  </div>
                   <CardContent>
                     {surveyRequests.filter((s) => s.surveyStatusNormalized === "completed").length === 0 ? (
-                      <div className="text-center py-8">
-                        <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                        <p className="text-gray-600">No completed surveys yet.</p>
-                      </div>
-                    ) : (
-                      <div className="space-y-4">
-                        {surveyRequests.filter((s) => s.surveyStatusNormalized === "completed").map((survey) => (
-                          <div key={survey.id} className="p-5 rounded-xl shadow-md bg-white/90 backdrop-blur border">
-                            <h3 className="font-semibold text-lg">{survey.user?.fullName || "Applicant"}</h3>
-                            <p className="text-sm text-gray-500 mb-2">CNIC: {survey.user?.cnic}</p>
-                            <p className="text-sm"><strong>Survey Status:</strong> <span className="bg-emerald-600 text-white px-2 py-0.5 rounded">{survey.surveyStatus}</span></p>
-                            <p className="text-sm"><strong>Recommendation:</strong> {survey.surveyRecommendation || "-"}</p>
-                            <p className="text-sm"><strong>Report:</strong> {survey.surveyReport || "-"}</p>
+                          <div className="text-center py-8">
+                            <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                            <p className="text-gray-600">No completed surveys yet.</p>
                           </div>
-                        ))}
-                      </div>
-                    )}
+                        ) : (
+                          <div className="space-y-4">
+                            {surveyRequests.filter((s) => s.surveyStatusNormalized === "completed").slice(0, showCompletedCount).map((survey) => (
+                              <div key={survey.id} className="p-5 rounded-xl shadow-md bg-white/90 backdrop-blur border">
+                                <div className="flex items-start justify-between">
+                                  <div>
+                                    <h3 className="font-semibold text-lg">{survey.user?.fullName || "Applicant"}</h3>
+                                    <p className="text-sm text-gray-500">CNIC: {survey.user?.cnic}</p>
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    {!isSurveyRead(survey.id) ? (
+                                      <Badge className="bg-red-600 text-white text-xs px-2 py-0.5 rounded-full animate-pulse">New</Badge>
+                                    ) : (
+                                      <Badge className="bg-emerald-600 text-white text-xs px-2 py-0.5 rounded-full flex items-center gap-1"><CheckCircle className="h-4 w-4" /> Donated</Badge>
+                                    )}
+                                    {!isSurveyRead(survey.id) && (
+                                      <Button size="sm" onClick={() => markSurveyRequestRead(survey.id)}>Done</Button>
+                                    )}
+                                  </div>
+                                </div>
+                                <div className="mt-3">
+                                  <p className="text-sm"><strong>Survey Status:</strong> <span className="bg-emerald-600 text-white px-2 py-0.5 rounded">{survey.surveyStatus}</span></p>
+                                  <p className="text-sm"><strong>Recommendation:</strong> {survey.surveyRecommendation || "-"}</p>
+                                  <p className="text-sm"><strong>Report:</strong> {survey.surveyReport || "-"}</p>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -889,7 +937,7 @@ export default function AdminDashboard() {
                                 <div className="flex items-center space-x-2 mb-1">
                                   <h3 className="font-semibold text-lg">{request.user.fullName}</h3>
                                   <Badge variant="outline">{formatCNIC(request.user.cnic)}</Badge>
-                                  {!readSurveyRequests.includes(request.id) && (
+                                  {!isSurveyRead(request.id) && (
                                     <Badge className="bg-red-600 text-white text-xs px-2 py-0.5 rounded-full animate-pulse">New</Badge>
                                   )}
                                 </div>
@@ -1001,6 +1049,9 @@ export default function AdminDashboard() {
                     <CardTitle>Completed Surveys</CardTitle>
                     <CardDescription>All surveys with submitted reports.</CardDescription>
                   </CardHeader>
+                  <div className="px-4 pb-2">
+                    <Button size="sm" variant="ghost" onClick={resetReadSurveyRequests}>Reset New</Button>
+                  </div>
                   <CardContent>
                     {surveyRequests.filter((s) => s.surveyStatusNormalized === "completed").length === 0 ? (
                       <div className="text-center py-8">
@@ -1009,15 +1060,39 @@ export default function AdminDashboard() {
                       </div>
                     ) : (
                       <div className="space-y-4">
-                        {surveyRequests.filter((s) => s.surveyStatusNormalized === "completed").map((survey) => (
+                        {surveyRequests.filter((s) => s.surveyStatusNormalized === "completed").slice(0, showCompletedCount).map((survey) => (
                           <div key={survey.id} className="p-5 rounded-xl shadow-md bg-white/90 backdrop-blur border">
-                            <h3 className="font-semibold text-lg">{survey.user?.fullName || "Applicant"}</h3>
-                            <p className="text-sm text-gray-500 mb-2">CNIC: {survey.user?.cnic}</p>
-                            <p className="text-sm"><strong>Survey Status:</strong> <span className="bg-emerald-600 text-white px-2 py-0.5 rounded">{survey.surveyStatus}</span></p>
-                            <p className="text-sm"><strong>Recommendation:</strong> {survey.surveyRecommendation || "-"}</p>
-                            <p className="text-sm"><strong>Report:</strong> {survey.surveyReport || "-"}</p>
+                            <div className="flex items-start justify-between">
+                              <div>
+                                <h3 className="font-semibold text-lg">{survey.user?.fullName || "Applicant"}</h3>
+                                <p className="text-sm text-gray-500">CNIC: {survey.user?.cnic}</p>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                {!isSurveyRead(survey.id) ? (
+                                  <Badge className="bg-red-600 text-white text-xs px-2 py-0.5 rounded-full animate-pulse">New</Badge>
+                                ) : (
+                                  <Badge className="bg-emerald-600 text-white text-xs px-2 py-0.5 rounded-full flex items-center gap-1"><CheckCircle className="h-4 w-4" /> Donated</Badge>
+                                )}
+                                {!isSurveyRead(survey.id) && (
+                                  <Button size="sm" onClick={() => markSurveyRequestRead(survey.id)}>Done</Button>
+                                )}
+                              </div>
+                            </div>
+                            <div className="mt-3">
+                              <p className="text-sm"><strong>Survey Status:</strong> <span className="bg-emerald-600 text-white px-2 py-0.5 rounded">{survey.surveyStatus}</span></p>
+                              <p className="text-sm"><strong>Recommendation:</strong> {survey.surveyRecommendation || "-"}</p>
+                              <p className="text-sm"><strong>Report:</strong> {survey.surveyReport || "-"}</p>
+                            </div>
                           </div>
                         ))}
+                        {/* mobile: no duplicate show-more controls (desktop has toggle) */}
+                        {surveyRequests.filter((s) => s.surveyStatusNormalized === "completed").length > 5 && (
+                          <div className="flex items-center justify-center gap-2 pt-2">
+                            <Button variant="ghost" onClick={() => setShowCompletedCount((c) => c > 5 ? 5 : surveyRequests.filter((s) => s.surveyStatusNormalized === "completed").length)}>
+                              {showCompletedCount > 5 ? 'Show less' : 'Show more'}
+                            </Button>
+                          </div>
+                        )}
                       </div>
                     )}
                   </CardContent>

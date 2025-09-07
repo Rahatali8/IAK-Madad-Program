@@ -37,6 +37,7 @@ export default function SurveyForm({ survey, refresh }: any) {
         }),
       });
       if (res.ok) {
+        // success — do not modify admin read state here. Admin will mark 'Done' manually.
       }
     } catch (e) {
       console.error('Failed to submit survey', e);
