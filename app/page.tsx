@@ -148,9 +148,9 @@ export default function HomePage() {
           <div className="absolute inset-0 z-0 pointer-events-none">
             <div className="w-full h-full overflow-hidden">
               <div className="absolute inset-0">
-                <img src="/baby.png" alt="slide-1" className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${carouselIndex === 0 ? 'opacity-100 blur-sm' : 'opacity-0 blur-md'}`} />
-                <img src="/chairmain.jpg" alt="slide-2" className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${carouselIndex === 1 ? 'opacity-100 blur-sm' : 'opacity-0 blur-md'}`} />
-                <img src="/stories-hero1.jpg" alt="slide-3" className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${carouselIndex === 2 ? 'opacity-100 blur-sm' : 'opacity-0 blur-md'}`} />
+                <img src="/baby.png" alt="Happy child receiving welfare support in Pakistan" className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${carouselIndex === 0 ? 'opacity-100 blur-sm' : 'opacity-0 blur-md'}`} />
+                <img src="/chairmain.jpg" alt="Welfare Platform founder Muhammad Muzahir Sheikh" className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${carouselIndex === 1 ? 'opacity-100 blur-sm' : 'opacity-0 blur-md'}`} />
+                <img src="/stories-hero1.jpg" alt="Success stories of families helped by welfare programs" className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${carouselIndex === 2 ? 'opacity-100 blur-sm' : 'opacity-0 blur-md'}`} />
               </div>
             </div>
           </div>
@@ -223,16 +223,16 @@ export default function HomePage() {
               <div className="hidden md:flex relative justify-center items-center h-full">
                 <div className="relative z-10 w-[300px] h-[300px] md:w-[460px] md:h-[460px]">
                   <div className="hero-circle-lift absolute left-0 bottom-0 w-72 h-72 rounded-full bg-white border-2 border-[#0D6DB7] flex items-center justify-center shadow-lg transition-transform duration-300 hover:-translate-y-2 hover:scale-105 hover:shadow-md">
-                    <img src="/hero-back.png" alt="Hero Main" className="rounded-full object-cover object-center w-full h-full" />
+                    <img src="/hero-back.png" alt="Family receiving financial assistance from Welfare Platform" className="rounded-full object-cover object-center w-full h-full" />
                   </div>
                   <div className="hero-circle-lift absolute left-[80px] top-4 w-36 h-36 rounded-full bg-white border-2 border-[#8DC63F] flex items-center justify-center shadow-md transition-transform duration-300 hover:-translate-y-2 hover:scale-105 hover:shadow-md">
-                    <img src="/hero-back.png" alt="Hero 2" className="rounded-full object-cover object-center w-full h-full" />
+                    <img src="/hero-back.png" alt="Community support and welfare programs in action" className="rounded-full object-cover object-center w-full h-full" />
                   </div>
                   <div className="hero-circle-lift absolute left-[270px] top-24 w-48 h-48 rounded-full bg-white border-2 border-[#0D6DB7] flex items-center justify-center shadow-xl transition-transform duration-300 hover:-translate-y-2 hover:scale-105 hover:shadow-md">
-                    <img src="/hero-back.png" alt="Hero 3" className="rounded-full object-cover object-center w-full h-full" />
+                    <img src="/hero-back.png" alt="Welfare Platform helping families achieve financial stability" className="rounded-full object-cover object-center w-full h-full" />
                   </div>
                   <div className="hero-circle-lift group absolute right-[35px] top-[350px] w-36 h-36 rounded-full bg-white border-2 border-lightblue flex items-center justify-center cursor-pointer transition-transform duration-300 hover:-translate-y-2 hover:scale-105 hover:shadow-md">
-                    <img src="/hero-back.png" alt="Hero 4" className="rounded-full object-cover object-center w-full h-full" />
+                    <img src="/hero-back.png" alt="Empowering lives through comprehensive welfare services" className="rounded-full object-cover object-center w-full h-full" />
                   </div>
                 </div>
 
@@ -335,7 +335,7 @@ export default function HomePage() {
               <div className="absolute inset-0 transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-full">
                 <img
                   src="/verify.png"
-                  alt="Verified Applications"
+                  alt="100% verification process for welfare applications"
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -363,7 +363,7 @@ export default function HomePage() {
               <div className="absolute inset-0 transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-full">
                 <img
                   src="/fast-p.png"
-                  alt="Fast Processing"
+                  alt="Fast processing of welfare applications within 24-48 hours"
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -390,7 +390,7 @@ export default function HomePage() {
               <div className="absolute inset-0 transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-full">
                 <img
                   src="/nation-w.png"
-                  alt="Nationwide Network"
+                  alt="Nationwide network covering all provinces of Pakistan"
                   className="w-full h-full object-cover"
                 />
               </div>

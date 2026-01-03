@@ -3,7 +3,7 @@ import { useAuth } from "@/components/providers/auth-provider";
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { User, BadgeCheck, IdCard, ShieldCheck, UserCircle } from "lucide-react";
+import { User, BadgeCheck, IdCard, ShieldCheck, UserCircle, Mail, MapPin, Phone } from "lucide-react";
 
 // Utility to generate a pastel color from a string
 function stringToColor(str: string) {
@@ -14,6 +14,7 @@ function stringToColor(str: string) {
   const h = Math.abs(hash) % 360;
   return `hsl(${h}, 70%, 80%)`;
 }
+
 export function ProfileDropdown() {
   const { user, logout } = useAuth();
   const [open, setOpen] = useState(false);
@@ -22,7 +23,12 @@ export function ProfileDropdown() {
 
   // Get first letter of name for fallback
   const initial = user.fullName?.charAt(0)?.toUpperCase() || " ";
-  const cnic = user.cnic || "N/A";
+  
+  // Database fields - check for actual data and show empty if not available
+  const cnic = user.cnic || "Not provided";
+  const email = user.email || "Not provided";
+  const phone = user.phone || "Not provided";
+  const address = user.address || "Not provided";
 
   return (
     <>
@@ -42,7 +48,6 @@ export function ProfileDropdown() {
       </button>
 
       {/* Sliding Card */}
-
       <div
         className={`fixed inset-0 z-[9999] flex items-start justify-end pr-6 pt-20 ${open ? '' : 'pointer-events-none'}`}
         aria-hidden={!open}
@@ -53,18 +58,35 @@ export function ProfileDropdown() {
             {/* Close button inside card */}
             <button
               onClick={() => setOpen(false)}
-              className="absolute top-3 right-3 z-20 text-gray-400 hover:text-gray-700 text-xl font-bold focus:outline-none bg-white border border-gray-200 rounded-full w-8 h-8 flex items-center justify-center shadow transition"
+              className="absolute top-3 right-3 z-20 text-gray-400 hover:text-gray-700 text-xl font-bold focus:outline-none hover:bg-blue-300 border border-gray-200 rounded-full w-8 h-8 flex items-center justify-center shadow transition"
               aria-label="Close profile card"
             >
               &times;
             </button>
-            {/* Blue Top Section */}
-            <div className="w-full h-24 rounded-t-2xl flex justify-center items-center relative bg-gradient-to-r from-[#1B0073] to-[#00A5E0]">
-              {/* Avatar Overlapping */}
+            
+            {/* Active Status - Top Left Corner */}
+            {/* <div className="absolute top-3 left-3 z-10">
+              <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-green-100 text-green-700 text-xs font-semibold border border-green-200">
+                <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                Active
+              </span>
+            </div> */}
+            
+            {/* Blue Top Section with Smooth Gradient Animation */}
+            <div 
+              className="w-full h-18 rounded-t-2xl flex flex-col justify-center items-center relative"
+              // style={{
+              //   background: 'linear-gradient(-45deg, #1B0073, #6A00F4, #00A5E0, #1B0073)',
+              //   backgroundSize: '400% 400%',
+              //   animation: 'gradientShift 6s ease infinite'
+              // }}
+            >
+              
+              {/* Avatar in center - below the blue section */}
               <div className="absolute left-1/2 top-full -translate-x-1/2 -translate-y-1/2 z-10">
                 <Avatar className="h-20 w-20 border-4 border-white shadow-lg">
                   <AvatarFallback
-                    className="text-4xl font-extrabold"
+                    className="text-3xl font-bold"
                     style={{ background: stringToColor(user.fullName || user.cnic || ".") }}
                   >
                     {initial}
@@ -72,69 +94,85 @@ export function ProfileDropdown() {
                 </Avatar>
               </div>
             </div>
+
             {/* Details Section */}
-            <div className="flex flex-col pt-14 pb-6 px-4 w-full">
-              <div className="font-bold text-2xl text-gray-900 mb-1 flex items-center gap-2">
-                <UserCircle className="w-6 h-6 text-darkblue" />
+            <div className="flex flex-col pt-10 px-4 w-full">
+              
+              {/* User Full Name - Centered below avatar */}
+              <div className="font-bold text-2xl text-gray-900 mb-4 text-center">
                 {user.fullName}
               </div>
-              <div className="text-sm text-gray-500 mb-2 capitalize flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-green-500" />
-                {user.role}
-              </div>
+              
               <div className="w-full border-b border-gray-200 my-2"></div>
+              
               <div className="w-full flex flex-col gap-4">
-                <div className="flex items-center gap-3 text-base text-gray-700">
-                  <IdCard className="w-5 h-5 text-lightblue" />
-                  <div>
+                {/* Email */}
+                <div className="flex items-start gap-3 text-base text-gray-700">
+                  <Mail className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <div className="text-xs text-gray-500">Email Address</div>
+                    <div className="font-medium break-words">{email}</div>
+                  </div>
+                </div>
+
+                {/* CNIC Number */}
+                <div className="flex items-start gap-3 text-base text-gray-700">
+                  <IdCard className="w-5 h-5 text-purple-500 mt-0.5 flex-shrink-0" />
+                  <div className="flex-1 min-w-0">
                     <div className="text-xs text-gray-500">CNIC Number</div>
-                    <div className="font-mono font-semibold tracking-wider">{cnic}</div>
+                    <div className="font-mono font-semibold tracking-wider break-words">{cnic}</div>
                   </div>
                 </div>
-                <div className="flex items-center gap-3 text-base text-gray-700">
-                  <BadgeCheck className="w-5 h-5 text-green-500" />
-                  <div>
-                    <div className="text-xs text-gray-500">Account Status</div>
-                    <span className="inline-block px-2 py-1 rounded bg-green-100 text-green-700 text-xs font-semibold">Active</span>
+
+                {/* Phone Number */}
+                <div className="flex items-start gap-3 text-base text-gray-700">
+                  <Phone className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <div className="text-xs text-gray-500">Phone Number</div>
+                    <div className="font-medium break-words">{phone}</div>
                   </div>
                 </div>
-                {/* Add more fields if available in user object */}
-                {user.address && (
-                  <div className="flex items-center gap-3 text-base text-gray-700">
-                    <svg className="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z" /><circle cx="12" cy="11" r="3" /></svg>
-                    <div>
-                      <div className="text-xs text-gray-500">Address</div>
-                      <div className="font-medium">{user.address}</div>
-                    </div>
+
+                {/* Address */}
+                <div className="flex items-start gap-3 text-base text-gray-700">
+                  <MapPin className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <div className="text-xs text-gray-500">Address</div>
+                    <div className="font-medium break-words">{address}</div>
                   </div>
-                )}
-                {/* {user.city && (
-                  <div className="flex items-center gap-3 text-base text-gray-700">
-                    <svg className="w-5 h-5 text-pink-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 22s8-4.5 8-10V5a2 2 0 00-2-2H6a2 2 0 00-2 2v7c0 5.5 8 10 8 10z" /></svg>
-                    <div>
-                      <div className="text-xs text-gray-500">City</div>
-                      <div className="font-medium">{user.city}</div>
-                    </div>
-                  </div>
-                )} */}
+                </div>
               </div>
+
               {/* Donor Profile Link (only for donor role) */}
-              {user.role === "DONOR" && (
+              {user.role && String(user.role).toLowerCase() === "donor" && (
                 <Link
-                  href="/dashboard/donor/profile"
+                  href="/dashboard/donor"
                   className="mt-6 w-full bg-white border border-[#e6e6f0] text-darkblue py-2 rounded-lg font-semibold hover:bg-[#f6f7fb] transition text-lg shadow text-center block"
                   onClick={() => setOpen(false)}
                 >
-                  View Profile
+                  Donor Dashboard
                 </Link>
               )}
+
+              {/* Admin Dashboard Link (only for admin role) */}
+              {user.role && String(user.role).toLowerCase() === "admin" && (
+                <Link
+                  href="/dashboard/admin"
+                  className="mt-6 w-full bg-white border border-[#e6e6f0] text-darkblue py-2 rounded-lg font-semibold hover:bg-[#f6f7fb] transition text-lg shadow text-center block"
+                  onClick={() => setOpen(false)}
+                >
+                  Admin Dashboard
+                </Link>
+              )}
+              
+              {/* Sign Out Button */}
               <button
                 onClick={() => {
                   logout();
                   setOpen(false);
                   router.push("/");
                 }}
-                className="mt-3 w-full bg-gradient-to-r from-[#1B0073] to-[#00A5E0] text-white py-2 rounded-lg font-semibold hover:opacity-95 transition text-lg shadow"
+                className="mt-4  mb-4 w-full bg-gradient-to-r from-[#1B0073] to-[#00A5E0] text-white py-2 rounded-lg font-semibold hover:opacity-95 transition text-lg shadow"
               >
                 Sign Out
               </button>
@@ -148,6 +186,21 @@ export function ProfileDropdown() {
         className={`fixed inset-0 z-[9998] bg-black/20 backdrop-blur-sm transition-opacity ${open ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
         onClick={() => setOpen(false)}
       />
+
+      {/* Gradient Animation Styles */}
+      <style jsx>{`
+        @keyframes gradientShift {
+          0% {
+            background-position: 0% 50%;
+          }
+          50% {
+            background-position: 100% 50%;
+          }
+          100% {
+            background-position: 0% 50%;
+          }
+        }
+      `}</style>
     </>
   );
 }

@@ -12,17 +12,12 @@ export default function UnifiedRequestForm() {
     father_name: '',
     cnic_number: '',
     phone_number: '',
-    marital_status: '',
-    family_count: '',
-    adult_member: '',
-    matric_member: '',
-    home_rent: '',
-    fridge: '',
+    family_members: '',
     monthly_income: '',
-    type: '',
-    description: '',
-    reason: '',
-    repayment_time: '',
+    home_type: '',
+    marital_status: '',
+    assistance_type: '',
+    situation_description: '',
   });
 
   const [cnicFront, setCnicFront] = useState<File | null>(null);
@@ -53,17 +48,12 @@ export default function UnifiedRequestForm() {
       father_name: '',
       cnic_number: '',
       phone_number: '',
-      marital_status: '',
-      family_count: '',
-      adult_member: '',
-      matric_member: '',
-      home_rent: '',
-      fridge: '',
+      family_members: '',
       monthly_income: '',
-      type: '',
-      description: '',
-      reason: '',
-      repayment_time: '',
+      home_type: '',
+      marital_status: '',
+      assistance_type: '',
+      situation_description: '',
     });
 
     setCnicFront(null);
@@ -133,191 +123,187 @@ export default function UnifiedRequestForm() {
     );
   }
 
- return (
-  <div className="max-w-4xl mx-auto p-6 sm:p-10 bg-white rounded-3xl shadow-xl border border-gray-200">
-    <h2 className="text-3xl font-extrabold text-[#1B0073] mb-6 text-center">Submit Your Request</h2>
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {[
-          { name: 'full_name', placeholder: 'Full Name', type: 'text' },
-          { name: 'father_name', placeholder: 'Father Name', type: 'text' },
-          {
-            name: 'cnic_number',
-            placeholder: 'CNIC Number must be 13 digits',
-            type: 'text',
-            title: 'CNIC must be in the format ',
-          },
-          {
-            name: 'phone_number',
-            placeholder: 'Phone Number must be 11 digits',
-            type: 'tel',
-            title: 'Phone number must be 11 digits and start with 03',
-          },
-          { name: 'family_count', placeholder: 'Family Count', type: 'number' },
-          { name: 'matric_member', placeholder: 'Matric Members', type: 'number' },
-          { name: 'monthly_income', placeholder: 'Monthly Income', type: 'text' },
-        ].map((field) => (
-          <input
-            key={field.name}
-            type={field.type}
-            name={field.name}
-            value={formData[field.name as keyof typeof formData]}
-            onChange={handleChange}
-            required
-            placeholder={field.placeholder}
-            title={field.title}
-            className="w-full rounded-xl border border-gray-300 px-4 py-3 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00A5E0] focus:border-transparent transition"
-          />
-        ))}
-
-        {/* Selects */}
-        <select
-          name="marital_status"
-          value={formData.marital_status}
-          onChange={handleChange}
-          required
-          className="w-full rounded-xl border border-gray-300 px-4 py-3 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00A5E0] focus:border-transparent transition"
-        >
-          <option value="" disabled>
-            Marital Status
-          </option>
-          <option value="Single">Single</option>
-          <option value="Married">Married</option>
-        </select>
-
-        <input
-          type="number"
-          name="adult_member"
-          value={formData.adult_member}
-          onChange={handleChange}
-          required
-          placeholder="18+ Members"
-          className="w-full rounded-xl border border-gray-300 px-4 py-3 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00A5E0] focus:border-transparent transition"
-        />
-
-        <select
-          name="home_rent"
-          value={formData.home_rent}
-          onChange={handleChange}
-          required
-          className="w-full rounded-xl border border-gray-300 px-4 py-3 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00A5E0] focus:border-transparent transition"
-        >
-          <option value="" disabled>
-            Is your home on rent?
-          </option>
-          <option>Yes</option>
-          <option>No</option>
-        </select>
-
-        <select
-          name="fridge"
-          value={formData.fridge}
-          onChange={handleChange}
-          required
-          className="w-full rounded-xl border border-gray-300 px-4 py-3 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00A5E0] focus:border-transparent transition"
-        >
-          <option value="" disabled>
-            Do you have a fridge?
-          </option>
-          <option>No</option>
-          <option>Yes</option>
-        </select>
-
-        <select
-          name="type"
-          value={formData.type}
-          onChange={handleChange}
-          required
-          className="w-full rounded-xl border border-gray-300 px-4 py-3 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00A5E0] focus:border-transparent transition"
-        >
-          <option value="" disabled>
-            Assistance Type
-          </option>
-          <option value="Loan">Loan</option>
-          <option value="Aid">Aid</option>
-          <option value="Microfinance">Microfinance</option>
-          <option value="Education Support">Education Support</option>
-          <option value="Medical Help">Medical Help</option>
-          <option value="Marriage Support">Marriage Support</option>
-        </select>
-      </div>
-
-      <textarea
-        name="description"
-        value={formData.description}
-        onChange={handleChange}
-        required
-        placeholder="Brief Description of Your Situation"
-        className="w-full rounded-xl border border-gray-300 px-4 py-3 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00A5E0] focus:border-transparent transition resize-none"
-      />
-
-      {formData.type === 'Loan' && (
+  return (
+    <div className="max-w-4xl mx-auto p-6 sm:p-10 bg-white rounded-3xl shadow-xl border border-gray-200 bg-gradient-to-b from-blue-50 via-white to-cyan-50">
+      <h2 className="text-3xl font-extrabold text-darkblue mb-6 text-center">Submit Your Request</h2>
+      <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <input
-            name="reason"
-            placeholder="Reason for Loan"
-            value={formData.reason}
+            type="text"
+            name="full_name"
+            value={formData.full_name}
+            onChange={handleChange}
+            required
+            placeholder="Full Name"
+            className="w-full rounded-xl border border-gray-300 px-4 py-3 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00A5E0] focus:border-transparent transition"
+          />
+
+          <input
+            type="text"
+            name="father_name"
+            value={formData.father_name}
+            onChange={handleChange}
+            required
+            placeholder="Father/Husband Name"
+            className="w-full rounded-xl border border-gray-300 px-4 py-3 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00A5E0] focus:border-transparent transition"
+          />
+
+          <input
+            type="text"
+            name="cnic_number"
+            value={formData.cnic_number}
+            onChange={handleChange}
+            required
+            placeholder="CNIC Number"
+            title="CNIC must be 13 digits"
+            className="w-full rounded-xl border border-gray-300 px-4 py-3 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00A5E0] focus:border-transparent transition"
+          />
+
+          <input
+            type="tel"
+            name="phone_number"
+            value={formData.phone_number}
+            onChange={handleChange}
+            required
+            placeholder="Phone Number"
+            title="Phone number must be 11 digits and start with 03"
+            className="w-full rounded-xl border border-gray-300 px-4 py-3 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00A5E0] focus:border-transparent transition"
+          />
+
+          <input
+            type="number"
+            name="family_members"
+            value={formData.family_members}
+            onChange={handleChange}
+            required
+            placeholder="Family Members"
+            className="w-full rounded-xl border border-gray-300 px-4 py-3 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00A5E0] focus:border-transparent transition"
+          />
+
+          <input
+            type="text"
+            name="monthly_income"
+            value={formData.monthly_income}
+            onChange={handleChange}
+            required
+            placeholder="Monthly Income"
+            className="w-full rounded-xl border border-gray-300 px-4 py-3 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00A5E0] focus:border-transparent transition"
+          />
+
+          <select
+            name="home_type"
+            value={formData.home_type}
             onChange={handleChange}
             required
             className="w-full rounded-xl border border-gray-300 px-4 py-3 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00A5E0] focus:border-transparent transition"
-          />
-          <input
-            name="repayment_time"
-            placeholder="Repayment Time (e.g., 6 months)"
-            value={formData.repayment_time}
+          >
+            <option value="" disabled>
+              Home Type
+            </option>
+            <option value="Own">Own</option>
+            <option value="Rent">Rent</option>
+            <option value="Relatives">Relatives</option>
+          </select>
+
+          <select
+            name="marital_status"
+            value={formData.marital_status}
             onChange={handleChange}
             required
             className="w-full rounded-xl border border-gray-300 px-4 py-3 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00A5E0] focus:border-transparent transition"
-          />
-        </div>
-      )}
+          >
+            <option value="" disabled>
+              Marital Status
+            </option>
+            <option value="Single">Single</option>
+            <option value="Married">Married</option>
+            <option value="Widowed">Widowed</option>
+            <option value="Divorced">Divorced</option>
+          </select>
 
-      {/* File Uploads */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div>
-          <label className="block mb-2 text-gray-700 font-medium">CNIC Front</label>
-          <input
-            ref={cnicFrontRef}
-            type="file"
-            accept="image/*"
-            onChange={handleFileChange(setCnicFront)}
-            className="w-full text-sm text-gray-600"
+          <select
+            name="assistance_type"
+            value={formData.assistance_type}
+            onChange={handleChange}
             required
-          />
+            className="w-full rounded-xl border border-gray-300 px-4 py-3 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00A5E0] focus:border-transparent transition"
+          >
+            <option value="" disabled>
+              Assistance Type
+            </option>
+            <option value="Loan">Loan</option>
+            <option value="Aid">Aid</option>
+            <option value="Microfinance">Microfinance</option>
+            <option value="Education Support">Education Support</option>
+            <option value="Medical Help">Medical Help</option>
+            <option value="Marriage Support">Marriage Support</option>
+            <option value="Business Startup Support">Business Startup Support</option>
+            <option value="Home Renovation Support">Home Renovation Support</option>
+            <option value="Widow Support">Widow Support</option>
+            <option value="Orphan Support">Orphan Support</option>
+            <option value="Food Assistance">Food Assistance</option>
+            <option value="Emergency Relief">Emergency Relief</option>
+            <option value="Skill Development Loan">Skill Development Loan</option>
+            <option value="Agriculture Support">Agriculture Support</option>
+            <option value="Utility Bill Support">Utility Bill Support</option>
+            <option value="Transport Support">Transport Support</option>
+          </select>
         </div>
-        <div>
-          <label className="block mb-2 text-gray-700 font-medium">CNIC Back</label>
-          <input
-            ref={cnicBackRef}
-            type="file"
-            accept="image/*"
-            onChange={handleFileChange(setCnicBack)}
-            className="w-full text-sm text-gray-600"
-            required
-          />
-        </div>
-        <div>
-          <label className="block mb-2 text-gray-700 font-medium">Upload Applicant Image</label>
-          <input
-            ref={documentRef}
-            type="file"
-            onChange={handleFileChange(setDocument)}
-            className="w-full text-sm text-gray-600"
-            required
-          />
-        </div>
-      </div>
 
-      <button
-        type="submit"
-        disabled={loading}
-        className={`w-full bg-gradient-to-r from-[#1B0073] to-[#00A5E0] text-white font-semibold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all ${
-          loading ? 'opacity-50 cursor-not-allowed' : ''
-        }`}
-      >
-        {loading ? 'Submitting...' : 'Submit Request'}
-      </button>
-    </form>
+        <textarea
+          name="situation_description"
+          value={formData.situation_description}
+          onChange={handleChange}
+          required
+          placeholder="Your Situation (Short Description)"
+          className="w-full rounded-xl border border-gray-300 px-4 py-3 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00A5E0] focus:border-transparent transition resize-none"
+        />
+
+        {/* File Uploads */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label className="block mb-2 text-gray-700 font-medium">CNIC Front</label>
+            <input
+              ref={cnicFrontRef}
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange(setCnicFront)}
+              className="w-full text-sm text-gray-600"
+              required
+            />
+          </div>
+          <div>
+            <label className="block mb-2 text-gray-700 font-medium">CNIC Back</label>
+            <input
+              ref={cnicBackRef}
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange(setCnicBack)}
+              className="w-full text-sm text-gray-600"
+              required
+            />
+          </div>
+          <div>
+            <label className="block mb-2 text-gray-700 font-medium">Upload Applicant Image</label>
+            <input
+              ref={documentRef}
+              type="file"
+              onChange={handleFileChange(setDocument)}
+              className="w-full text-sm text-gray-600"
+              required
+            />
+          </div>
+        </div>
+
+        <button
+          type="submit"
+          disabled={loading}
+          className={`w-full bg-gradient-to-r from-[#1B0073] to-[#00A5E0] text-white font-semibold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all ${loading ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
+        >
+          {loading ? 'Submitting...' : 'Submit Request'}
+        </button>
+      </form>
     </div>
   );
 }

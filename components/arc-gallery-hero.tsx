@@ -33,6 +33,9 @@ const ArcGalleryHero: React.FC<ArcGalleryHeroProps> = ({
         cardSize: cardSizeLg,
     })
 
+    // topOffset reserves space for a fixed header on small screens
+    const [topOffset, setTopOffset] = useState(0)
+
     const [backgroundImage, setBackgroundImage] = useState<number | null>(null)
     const [autoSlideIndex, setAutoSlideIndex] = useState(0)
 
@@ -41,10 +44,13 @@ const ArcGalleryHero: React.FC<ArcGalleryHeroProps> = ({
             const width = window.innerWidth
             if (width < 640) {
                 setDimensions({ radius: radiusSm, cardSize: cardSizeSm })
+                setTopOffset(0) // allow header overlap
             } else if (width < 1024) {
                 setDimensions({ radius: radiusMd, cardSize: cardSizeMd })
+                setTopOffset(0) // allow header overlap
             } else {
                 setDimensions({ radius: radiusLg, cardSize: cardSizeLg })
+                setTopOffset(0) // allow header overlap
             }
         }
 
@@ -80,7 +86,11 @@ const ArcGalleryHero: React.FC<ArcGalleryHeroProps> = ({
     const currentBackgroundImage = backgroundImage !== null ? backgroundImage : autoSlideIndex
 
     return (
-        <section className={`relative overflow-hidden h-[88vh] flex flex-col mt-[-35px] ${className}`}>
+        <section
+            className={`relative overflow-hidden h-[88vh] flex flex-col ${className}`}
+            // apply top padding to avoid header overlap on small screens
+            style={{ paddingTop: `${topOffset}px` }}
+        >
             {/* Full Background Image */}
             <div className="absolute inset-0 z-0">
                 <div
@@ -137,6 +147,9 @@ const ArcGalleryHero: React.FC<ArcGalleryHeroProps> = ({
                         const x = Math.cos(angleRad) * dimensions.radius
                         const y = Math.sin(angleRad) * dimensions.radius
 
+                        // push images a bit down on small screens by adding topOffset/2 to bottom
+                        const bottomValue = y + topOffset / 2
+
                         return (
                             <div
                                 key={i}
@@ -148,7 +161,7 @@ const ArcGalleryHero: React.FC<ArcGalleryHeroProps> = ({
                                     width: dimensions.cardSize,
                                     height: dimensions.cardSize,
                                     left: `calc(50% + ${x}px)`,
-                                    bottom: `${y}px`,
+                                    bottom: `${bottomValue}px`,
                                     transform: `translate(-50%, 50%) translateZ(${isBackground || isAutoSlide ? -50 : 20}px) rotateY(${angle * 0.3}deg)`,
                                     animationDelay: `${i * 100}ms`,
                                     animationFillMode: "forwards",
@@ -167,8 +180,8 @@ const ArcGalleryHero: React.FC<ArcGalleryHeroProps> = ({
                                         filter: isBackground || isAutoSlide ? "brightness(1.1) saturate(1.3) contrast(1.1)" : "none",
                                         boxShadow:
                                             isBackground || isAutoSlide
-                                                ? "0 25px 50px -12px rgba(255, 215, 0, 0.4), 0 0 30px rgba(255, 215, 0, 0.3)"
-                                                : "0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2)",
+                                                ? "0 35px 60px -12px rgba(255, 215, 0, 0.4), 0 0 30px rgba(255, 215, 0, 0.3)"
+                                                : "0 30px 40px -10px rgba(0, 0, 0, 0.4), 0 15px 15px -5px rgba(0, 0, 0, 0.3)",
                                     }}
                                 >
                                     <img
@@ -214,7 +227,7 @@ const ArcGalleryHero: React.FC<ArcGalleryHeroProps> = ({
                 </div>
             </div>
 
-            <style jsx>{`
+<style jsx>{`
   @keyframes softPulse {
     0% {
       transform: scale(1);
@@ -228,6 +241,20 @@ const ArcGalleryHero: React.FC<ArcGalleryHeroProps> = ({
   }
   .animate-softPulse {
     animation: softPulse 3s ease-in-out infinite;
+  }
+
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
   }
 `}</style>
         </section>

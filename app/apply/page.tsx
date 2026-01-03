@@ -10,7 +10,7 @@ export default function ApplyFormPage() {
     <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-10">
-          <h1 className="text-5xl font-extrabold text-gray-800 mb-4">Apply for Support</h1>
+          <h1 className="text-5xl font-extrabold text-darkblue mb-4">Apply <span className="text-lightblue">For</span> Support</h1>
           <p className="text-lg text-gray-600">
             Fill out the form below to request financial or social assistance.
           </p>

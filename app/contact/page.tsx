@@ -126,7 +126,7 @@ export default function ContactPage() {
             <div className="relative h-80 md:h-full group rounded-2xl overflow-hidden shadow-lg">
               <img
                 src="/hero1.jpg"
-                alt="Support"
+                alt="Welfare Platform support team ready to help families in need"
                 className="w-full h-full object-cover transition duration-700 group-hover:blur-sm"
               />
               <div className="absolute bottom-0 left-0 w-full bg-white/90 backdrop-blur-md shadow-lg p-6 transform translate-y-full group-hover:translate-y-0 transition-transform duration-700 ease-in-out">

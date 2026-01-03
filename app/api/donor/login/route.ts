@@ -32,7 +32,12 @@ export async function POST(req: Request) {
     {
       id: donor.id,
       role: 'donor',
+      name: donor.name,
       cnic: donor.cnic,
+      email: donor.email,
+      contact_number: donor.contact_number,
+      organization_name: donor.organization_name,
+      created_at: donor.created_at,
     },
     JWT_SECRET,
     { expiresIn: '7d' }

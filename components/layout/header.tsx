@@ -1,9 +1,8 @@
-
 "use client";
 
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, Menu, X, ShieldCheck, User, HeartHandshake } from "lucide-react";
+import { ChevronDown, Menu, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/components/providers/auth-provider";
@@ -12,9 +11,7 @@ import { ProfileDropdown } from "@/components/profile-dropdown";
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
-  const [dashboardOpen, setDashboardOpen] = useState(false);
   const servicesRef = useRef<HTMLDivElement | null>(null);
-  const dashboardRef = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
   const pathname = usePathname();
   const { user, logout } = useAuth();
@@ -30,25 +27,10 @@ export function Header() {
       ) {
         setServicesOpen(false);
       }
-      if (
-        dashboardRef.current &&
-        !(dashboardRef.current as HTMLElement).contains(event.target as Node) &&
-        !(event.target as HTMLElement).closest("[aria-expanded][aria-expanded='true']")
-      ) {
-        setDashboardOpen(false);
-      }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
-  const handleDashboardClick = (type: string) => {
-    if (!user) {
-      router.push("/signup");
-    } else {
-      router.push(`/${type}/dashboard`);
-    }
-  };
 
   return (
     <header className="sticky top-0 z-50 w-full bg-gradient-to-r from-blue-50 via-white to-blue-100 shadow-lg">
@@ -60,11 +42,11 @@ export function Header() {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-10 font-semibold text-lg">
-          <Link href="/about" className="text-blue-900 hover:text-blue-600 transition-colors px-2 py-1 rounded-md hover:bg-blue-50">About</Link>
-          <Link href="/success-stories" className="text-blue-900 hover:text-blue-600 transition-colors px-2 py-1 rounded-md hover:bg-blue-50">Success Stories</Link>
+          <Link href="/about" className="text-blue-900 hover:text-blue-600 transition-colors px-2 py-1 rounded-md">About</Link>
+          <Link href="/success-stories" className="text-blue-900 hover:text-blue-600 transition-colors px-2 py-1 rounded-md">Success Stories</Link>
           <div className="relative">
             <button
-              className="text-blue-900 hover:text-blue-600 transition-colors flex items-center gap-1 px-2 py-1 rounded-md hover:bg-blue-50"
+              className="text-blue-900 hover:text-blue-600 transition-colors flex items-center gap-1 px-2 py-1 rounded-md"
               onClick={() => setServicesOpen((prev) => !prev)}
               aria-expanded={servicesOpen}
             >
@@ -78,18 +60,23 @@ export function Header() {
             )}
           </div>
           {!user && (
-            <Link href="/stats-sec" className="text-blue-900 hover:text-blue-600 transition-colors px-2 py-1 rounded-md hover:bg-blue-50">Overview</Link>
+            <>
+              <Link href="/stats-sec" className="text-blue-900 hover:text-blue-600 transition-colors px-2 py-1 rounded-md">Overview</Link>
+              <Link href="/donor/signup" className="text-blue-900 hover:text-blue-600 transition-colors px-2 py-1 rounded-md">Donor Signup</Link>
+            </>
           )}
 
           {user && (
             <>
-              <Link href="/apply" className="text-blue-900 hover:text-blue-600 transition-colors px-2 py-1 rounded-md hover:bg-blue-50">Apply</Link>
-              <Link href="/dashboard/user" className="flex items-center gap-2 px-5 py-3 text-base text-blue-900 hover:bg-blue-50 rounded-t-xl">
-              User Dashboard
+              <Link href="/apply" className="text-blue-900 hover:text-blue-600 transition-colors px-2 py-1 rounded-md">Apply</Link>
+              <Link href="/dashboard/user" className="text-blue-900 hover:text-blue-600 transition-colors px-2 py-1 rounded-md">
+                User Dashboard
               </Link>
-              <Link href="/donor/signup" className="flex items-center gap-2 px-5 py-3 text-base text-blue-900 hover:bg-blue-50 rounded-t-xl">
-              Donor Signup
-              </Link>
+              {String(user.role).toLowerCase() !== "donor" && (
+                <Link href="/donor/signup" className="text-blue-900 hover:text-blue-600 transition-colors px-2 py-1 rounded-md">
+                  Donor Signup
+                </Link>
+              )}
             </>
           )}
         </nav>
@@ -104,34 +91,24 @@ export function Header() {
             <ProfileDropdown />
           ) : (
             <>
-              {/* Login Dropdown */}
-              <div className="relative group">
+              <Link href="/login">
                 <Button
-                  variant="ghost"
-                  className="text-blue-900 font-semibold hover:bg-blue-50 px-4 py-2 rounded-lg flex items-center gap-1"
+                  className="bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white font-semibold px-6 py-2 rounded-lg shadow-md transition-all duration-300"
                 >
-                  Login <ChevronDown className="w-4 h-4" />
+                  Login
                 </Button>
-                  <div className="absolute hidden group-hover:block bg-white shadow-xl rounded-xl mt-2 w-48 z-50 border border-blue-100">
-                  <Link href="/login" className="block w-full text-left px-5 py-3 text-base text-blue-900 hover:bg-blue-50 rounded-t-xl">User Login</Link>
-                  <Link href="/donor/login" className="block w-full text-left px-5 py-3 text-base text-blue-900 hover:bg-blue-50">Donor Login</Link>
-                  <Link href="/survey-login" className="block w-full text-left px-5 py-3 text-base text-blue-900 hover:bg-blue-50">Survey Team</Link>
-                  <Link href="/admin/login" className="block w-full text-left px-5 py-3 text-base text-blue-900 hover:bg-blue-50 rounded-b-xl">Admin Login</Link>
-                </div>
-              </div>
-              {/* Signup Dropdown */}
+              </Link>
               <div className="relative group">
-                <Link href="/signup">
+                {/* <Link href="/signup">
                   <Button
                     className="bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white font-semibold px-4 py-2 rounded-lg shadow-md flex items-center gap-1">
                     Sign Up
                   </Button>
-                </Link>
+                </Link> */}
               </div>
             </>
           )}
         </div>
-
 
         {/* Mobile Menu Toggle */}
         <button className="md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
@@ -147,47 +124,38 @@ export function Header() {
             <Link href="/services" className="block text-gray-700 hover:text-blue-600" onClick={() => setIsMenuOpen(false)}>Services</Link>
             <Link href="/success-stories" className="block text-gray-700 hover:text-blue-600" onClick={() => setIsMenuOpen(false)}>Success Stories</Link>
             <Link href="/how-it-works" className="block text-gray-700 hover:text-blue-600" onClick={() => setIsMenuOpen(false)}>How It Works</Link>
+
             {!user && (
-              <Link href="/stats-sec" className="text-gray-700 hover:text-blue-600 transition-colors">stats</Link>
+              <Link href="/stats-sec" className="block text-gray-700 hover:text-blue-600 transition-colors" onClick={() => setIsMenuOpen(false)}>
+                Overview
+              </Link>
             )}
 
             {user && !isAdminArea && (
               <>
                 <Link href="/apply" className="block text-gray-700 hover:text-blue-600" onClick={() => setIsMenuOpen(false)}>Apply</Link>
-
-
-                <Link href="/dashboard/user" className="flex items-center gap-2 px-5 py-3 text-base text-blue-900 hover:bg-blue-50 rounded-t-xl">
-                  <User className="w-5 h-5 text-blue-500" /> User Dashboard
-                </Link>
-
-                {/* ✅ Donor Signup in Mobile view */}
-                <Link href="/donor/signup" className="block text-gray-700 hover:text-blue-600" onClick={() => setIsMenuOpen(false)}>Donor Signup</Link>
-
+                <Link href="/dashboard/user" className="block text-gray-700 hover:text-blue-600" onClick={() => setIsMenuOpen(false)}>User Dashboard</Link>
+                {String(user.role).toLowerCase() !== "donor" && (
+                  <Link href="/donor/signup" className="block text-gray-700 hover:text-blue-600" onClick={() => setIsMenuOpen(false)}>Donor Signup</Link>
+                )}
               </>
             )}
 
-            <div className="border-t pt-4 space-y-2">
+            <div className="space-y-3">
               {user ? (
-                <Button variant="ghost" onClick={() => { logout(); setIsMenuOpen(false); }} className="w-full justify-start">Logout</Button>
+                <Button variant="ghost" onClick={() => { logout(); setIsMenuOpen(false); }} className="w-full justify-center bg-red-500 text-white">Logout</Button>
               ) : (
                 <>
-                  {/* Login Dropdown */}
-                  <details className="border rounded-md">
-                    <summary className="px-4 py-2 text-gray-700 cursor-pointer w-full">Login</summary>
-                    <div className="pl-4 pb-2 flex flex-col space-y-1">
-                      <Link href="/login" className="text-left text-sm text-gray-700 hover:text-blue-600" onClick={() => setIsMenuOpen(false)}>User Login</Link>
-                      <Link href="/donor/login" className="text-left text-sm text-gray-700 hover:text-blue-600" onClick={() => setIsMenuOpen(false)}>Donor Login</Link>
-                      <Link href="/admin/login" className="text-left text-sm text-gray-700 hover:text-blue-600" onClick={() => setIsMenuOpen(false)}>Admin Login</Link>
-                    </div>
-                  </details>
-                  {/* Signup Dropdown */}
-                  <div className="relative group">
-                    <Link href="/signup"><Button
-                      className="bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white font-semibold px-4 py-2 rounded-lg shadow-md flex items-center gap-1">
+                  <Link href="/login" onClick={() => setIsMenuOpen(false)}>
+                    <Button className="w-full bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white font-semibold">
+                      Login
+                    </Button>
+                  </Link>
+                  {/* <Link href="/signup" onClick={() => setIsMenuOpen(false)}>
+                    <Button className="w-full bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white font-semibold">
                       Sign Up
                     </Button>
-                    </Link>
-                  </div>
+                  </Link> */}
                 </>
               )}
             </div>
@@ -196,5 +164,4 @@ export function Header() {
       )}
     </header>
   );
-  // ...existing code...
 }

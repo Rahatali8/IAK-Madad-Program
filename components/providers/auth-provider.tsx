@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { createContext, useContext, useEffect, useState } from "react"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 
 interface User {
   id: number
@@ -11,6 +11,8 @@ interface User {
   address: string
   role: string
   city?: string;
+  email?: string;
+  phone?: string;
 }
 
 interface AuthContextType {
@@ -26,6 +28,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const pathname = usePathname()
+  const router = useRouter()
 
   useEffect(() => {
     if (pathname === "/login" || pathname === "/signup") {
@@ -38,20 +41,40 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const checkAuth = async () => {
     try {
-      const response = await fetch("/api/user/profile", { credentials: "include" })
+      const response = await fetch("/api/auth/profile", { credentials: "include" })
       if (response.ok) {
-        const data = await response.json()
-        // Map backend user to frontend structure
-        setUser({
-          id: data.user.id,
-          cnic: data.user.cnic,
-          fullName: data.user.name, // backend 'name' -> frontend 'fullName'
-          address: data.user.address,
-          role: data.user.role,
-        })
+        const data = await response.json();
+        if (data.user) {
+          setUser({
+            id: data.user.id,
+            cnic: data.user.cnic,
+            fullName: data.user.fullName,
+            address: data.user.address,
+            role: data.user.role,
+            email: data.user.email,
+            phone: data.user.phone,
+          });
+          // If the authenticated user is an admin, ensure they stay on the admin dashboard
+          try {
+            const role = data.user.role && String(data.user.role).toLowerCase()
+            if (role === "admin") {
+              const onAdminArea = pathname?.startsWith("/dashboard/admin") || pathname?.startsWith("/admin")
+              if (!onAdminArea) {
+                router.push("/dashboard/admin")
+              }
+            }
+          } catch (err) {
+            console.error("Admin redirect check failed:", err)
+          }
+        } else {
+          setUser(null);
+        }
+      } else {
+        setUser(null);
       }
     } catch (error) {
       console.error("Auth check error:", error)
+      setUser(null);
     } finally {
       setIsLoading(false)
     }

@@ -169,7 +169,7 @@ export default function SuccessStoriesPage() {
 
           {/* Subtext */}
           <motion.p
-            className="text-base xs:text-lg sm:text-xl mb-8 max-w-3xl mx-auto text-gray-100 opacity-90"
+            className="text-base xs:text-lg sm:text-xl mb-8 max-w-3xl mx-auto text-white opacity-90"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}

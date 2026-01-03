@@ -27,21 +27,26 @@ export async function POST(req: NextRequest) {
     const fullName = formData.get('full_name') as string;
     const fatherName = formData.get('father_name') as string;
     const cnicNumber = formData.get('cnic_number') as string;
-    const maritalStatus = formData.get('marital_status') as string;
-    const familyCount = formData.get('family_count') as string;
-    const adultMember = formData.get('adult_member') as string;
-    const matricMember = formData.get('matric_member') as string;
-    const homeRent = formData.get('home_rent') as string;
-    const fridge = formData.get('fridge') as string;
+    const phoneNumber = formData.get('phone_number') as string;
+    const familyMembers = formData.get('family_members') as string;
     const monthlyIncome = formData.get('monthly_income') as string;
-    const type = formData.get('type') as string;
-    const description = formData.get('description') as string;
-    const reason = formData.get('reason') as string | null;
-    const repayment_time = formData.get('repayment_time') as string | null;
+    const homeType = formData.get('home_type') as string;
+    const maritalStatus = formData.get('marital_status') as string;
+    const assistanceType = formData.get('assistance_type') as string;
+    const situationDescription = formData.get('situation_description') as string;
+
+    // Validation
+    if (!fullName || !fatherName || !cnicNumber || !familyMembers || !monthlyIncome || !homeType || !maritalStatus || !assistanceType || !situationDescription) {
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    }
 
     const cnicFront = formData.get('cnic_front') as File;
     const cnicBack = formData.get('cnic_back') as File | null;
     const document = formData.get('document') as File | null;
+
+    if (!cnicFront) {
+      return NextResponse.json({ error: 'CNIC Front image is required' }, { status: 400 });
+    }
 
     const uploadsDir = path.join(process.cwd(), 'public', 'uploads');
 
@@ -63,21 +68,16 @@ export async function POST(req: NextRequest) {
 
     const request = await db.request.create({
       data: {
-        user_id: decoded.id, // ✅ fixed here
+        user_id: decoded.id,
         full_name: fullName,
         father_name: fatherName,
         cnic_number: cnicNumber,
         marital_status: maritalStatus,
-        family_count: parseInt(familyCount),
-         adult_member: parseInt(adultMember as string),
-        matric_member: parseInt(matricMember || '0'),
-        home_rent: homeRent,   // ✅ string -> boolean
-        fridge: fridge,
-        monthly_income: parseFloat(monthlyIncome),
-        type,
-        description,
-        reason: reason || null,
-        repayment_time: repayment_time || null,
+        family_count: parseInt(familyMembers),
+        monthly_income: parseInt(monthlyIncome),
+        home_rent: homeType,
+        type: assistanceType,
+        description: situationDescription,
         cnic_front: cnicFrontPath,
         cnic_back: cnicBackPath,
         document: documentPath,

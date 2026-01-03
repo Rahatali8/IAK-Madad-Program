@@ -110,25 +110,25 @@ export default function DonorSignupPage() {
         <Card className="mb-8 border-0 shadow-md bg-blue-50">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-darkblue text-lg">
-              <FileText className="w-5 h-5" />
+              <FileText className="w-5 h-5 text-lightblue" />
               Please Read Before Signing Up
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-darkblue text-sm">
-            <p className="flex items-start gap-2">
-              <CheckCircle className="text-green-600 w-4 h-4 mt-1" />
-              Please ensure your <strong>CNIC</strong> and <strong>Email</strong> are correct. Duplicate entries will be rejected.
+            <p className="flex items-center gap-2">
+              <CheckCircle className="text-green-600 w-4 h-4 flex-shrink-0" />
+              Please ensure your CNIC and Email are correct. Duplicate entries will be rejected.
             </p>
-            <p className="flex items-start gap-2">
-              <CheckCircle className="text-green-600 w-4 h-4 mt-1" />
+            <p className="flex items-center gap-2">
+              <CheckCircle className="text-green-600 w-4 h-4 flex-shrink-0" />
               All data is treated confidentially and stored securely.
             </p>
-            <p className="flex items-start gap-2">
-              <CheckCircle className="text-green-600 w-4 h-4 mt-1" />
+            <p className="flex items-center gap-2">
+              <CheckCircle className="text-green-600 w-4 h-4 flex-shrink-0" />
               Avoid using fake information — we verify submissions.
             </p>
-            <p className="flex items-start gap-2">
-              <CheckCircle className="text-green-600 w-4 h-4 mt-1" />
+            <p className="flex items-center gap-2">
+              <CheckCircle className="text-green-600 w-4 h-4 flex-shrink-0" />
               Submitting the form doesn't guarantee acceptance.
             </p>
           </CardContent>
@@ -266,7 +266,7 @@ export default function DonorSignupPage() {
               <div className="mt-6 text-center">
                 <p className="text-sm text-gray-600">
                   Already have an account?{" "}
-                  <Link href="/donor/login" className="text-[#1e3a8a] hover:text-[#1e40af] font-medium">
+                  <Link href="/login" className="text-[#1e3a8a] hover:text-[#1e40af] font-medium">
                     Sign in here
                   </Link>
                 </p>

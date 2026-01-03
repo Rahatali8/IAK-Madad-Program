@@ -1,6 +1,6 @@
 'use client'
 import { Button } from "@/components/ui/button"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Heart, Users, Target, TrendingUp, Shield } from "lucide-react"
 import ArcGalleryHero from "@/components/arc-gallery-hero";
@@ -79,6 +79,16 @@ export default function AboutPage() {
 
   const [showFullJourney, setShowFullJourney] = useState(false);
 
+  useEffect(() => {
+    if (showFullJourney) {
+      const timer = setTimeout(() => {
+        setShowFullJourney(false);
+      }, 300000); // 5 minutes in milliseconds
+
+      return () => clearTimeout(timer);
+    }
+  }, [showFullJourney]);
+
   return (
     <div className="min-h-screen bg-white">
 
@@ -97,9 +107,17 @@ export default function AboutPage() {
         />
       </main>
 
+      {/* Page Title */}
+      <section className="py-8 px-4 bg-white">
+        <div className="max-w-4xl mx-auto text-center">
+          <h1 className="text-4xl sm:text-5xl font-bold text-darkblue mb-4">About Welfare Platform</h1>
+          <p className="text-xl text-gray-600">Empowering communities through comprehensive welfare programs and financial assistance across Pakistan</p>
+        </div>
+      </section>
+
 
       {/* Mission & Vision - redesigned */}
-      <section className="py-12 px-4 sm:py-20 sm:px-8 bg-white">
+      <section className="py-12 px-4 sm:py-20 sm:px-8 bg-white bg-gradient-to-b from-blue-50 via-white to-cyan-50">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
             <div className="space-y-6">
@@ -171,7 +189,7 @@ export default function AboutPage() {
 
 
       {/* Values */}
-      <section className="py-10 px-2 sm:py-16 sm:px-4 bg-gray-50 m-2 sm:m-5">
+      <section className="py-10 px-2 sm:py-16 sm:px-4 bg-gray-50 m-2 sm:m-5 ">
         <div className="container mx-auto">
           <div className="text-center mb-8 sm:mb-12">
             <h2 className="mb-4 sm:mb-6 text-2xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-darkblue drop-shadow-2xl">
@@ -213,8 +231,6 @@ export default function AboutPage() {
         </div>
       </section>
 
-
-
       {/* Timeline - Horizontal Revealable Journey */}
       <section className="py-20 px-4 bg-gradient-to-b from-blue-50 via-white to-cyan-50">
         <div className="container mx-auto">
@@ -223,9 +239,9 @@ export default function AboutPage() {
             <p className="text-2xl text-gray-700">A timeline of our growth, innovation, and impact</p>
           </div>
           <div className="relative w-full max-w-6xl mx-auto">
-            <div className="flex items-center justify-center gap-8 relative overflow-x-auto pb-8">
+            <div className="flex items-center justify-start sm:justify-center gap-4 sm:gap-8 relative overflow-x-auto sm:overflow-x-hidden">
               {/* First milestone */}
-              <div className="flex flex-col items-center min-w-[260px]">
+              <div className="flex flex-col items-center min-w-[200px] sm:min-w-[260px]">
                 <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-full flex items-center justify-center shadow-xl border-4 border-white mb-4">
                   <span className="text-white text-2xl font-extrabold drop-shadow-lg">{milestones[0].year}</span>
                 </div>
@@ -258,7 +274,7 @@ export default function AboutPage() {
                   {milestones.slice(1, -1).map((milestone, index) => (
                     <>
                       <div className="h-1 w-16 bg-gradient-to-r from-blue-300 to-cyan-300 rounded-full" />
-                      <div key={index} className="flex flex-col items-center min-w-[260px]">
+                      <div key={index} className="flex flex-col items-center min-w-[200px] sm:min-w-[260px]">
                         <div className="w-20 h-20 bg-gradient-to-br from-blue-400 to-cyan-300 rounded-full flex items-center justify-center shadow-xl border-4 border-white mb-4">
                           <span className="text-white text-2xl font-extrabold drop-shadow-lg">{milestone.year}</span>
                         </div>
@@ -277,7 +293,7 @@ export default function AboutPage() {
 
               {/* Last milestone always at the end */}
               <div className="h-1 w-16 bg-gradient-to-r from-blue-300 to-cyan-300 rounded-full" />
-              <div className="flex flex-col items-center min-w-[260px]">
+              <div className="flex flex-col items-center min-w-[200px] sm:min-w-[260px]">
                 <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-full flex items-center justify-center shadow-xl border-4 border-white mb-4">
                   <span className="text-white text-2xl font-extrabold drop-shadow-lg">{milestones[milestones.length - 1].year}</span>
                 </div>
@@ -349,7 +365,7 @@ export default function AboutPage() {
 
 
       {/* Stats */}
-      <section className="py-16 px-4 bg-gray-50 m-5">
+      <section className="py-16 px-4 bg-gray-50 m-5 bg-gradient-to-b from-blue-50 via-white to-cyan-50">
         <div className="container mx-auto">
           <div className="text-center mb-12">
             <h2 className="mb-6 text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-darkblue drop-shadow-2xl">

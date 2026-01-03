@@ -52,6 +52,8 @@ model Donors {
   created_at        DateTime     @default(now())
   updated_at        DateTime     @updatedAt
 
+  acceptedRequests  AcceptedByDonor[]
+
   @@map("donors")
 }
 
@@ -84,6 +86,7 @@ model Request {
   forwardedToSurvey Boolean @default(false)
   user           User          @relation(fields: [user_id], references: [id], onDelete: Cascade)
   surveys        Survey[]
+  acceptedByDonors AcceptedByDonor[]
 
   @@map("requests")
 }
@@ -170,5 +173,17 @@ enum DonorStatus {
   PENDING
   ACTIVE
   REJECTED
+}
+
+model AcceptedByDonor {
+  id         Int      @id @default(autoincrement())
+  donorId    Int
+  requestId  Int
+  acceptedAt DateTime @default(now())
+
+  donor   Donors  @relation(fields: [donorId], references: [id])
+  request Request @relation(fields: [requestId], references: [id])
+
+  @@unique([donorId, requestId])
 }
 

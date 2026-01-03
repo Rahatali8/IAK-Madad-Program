@@ -7,7 +7,7 @@ async function main() {
   try {
     // Check if admin already exists
     const email = 'himyyatadmin@gmail.com';
-    const password = 'himayatadmin12@$';
+    const password = 'admin123';
     const cnic = '9999999999999'; // Change if you want a specific CNIC
     const name = 'Himayat Admin';
 

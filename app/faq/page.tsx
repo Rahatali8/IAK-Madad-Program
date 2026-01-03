@@ -257,7 +257,7 @@ export default function FAQPage() {
                 placeholder="Search for answers..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-12 py-4 text-lg bg-white border-white/20 text-white placeholder:text-darkblue"
+                className="pl-12 py-4 text-lg bg-white border-white/20 text-black placeholder:text-darkblue"
               />
             </div>
 

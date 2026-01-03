@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
+import * as bcrypt from 'bcryptjs';
+import * as jwt from 'jsonwebtoken';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 
@@ -10,18 +10,54 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { cnic, password } = body;
+    const { cnic, email, password } = body;
 
-    // ✅ Clean input CNIC for query
-    const cleanInputCnic = (cnic ?? "").replace(/-/g, "");
+    let user: any = null;
+    let role = 'user';
 
-    // Find user by CNIC
-    const user = await prisma.user.findUnique({
-      where: { cnic: cleanInputCnic },
-    });
+    // Check if it's email login
+    if (email) {
+      // First check admin table
+      user = await prisma.admin.findUnique({
+        where: { email: email },
+      });
+      role = 'admin';
+
+      // If not found in admin, check donors table
+      if (!user) {
+        user = await prisma.donors.findUnique({
+          where: { email: email },
+        });
+        role = 'donor';
+      }
+        // If not found in donors, check regular users table
+        if (!user) {
+          user = await prisma.user.findUnique({ where: { email: email } });
+          role = 'user';
+        }
+    } else {
+      // Regular user/donor login with CNIC
+      const cleanInputCnic = (cnic ?? "").replace(/-/g, "");
+
+      user = await prisma.user.findUnique({
+        where: { cnic: cleanInputCnic },
+      });
+
+      if (!user) {
+        user = await prisma.donors.findUnique({
+          where: { cnic: cleanInputCnic },
+        });
+        role = 'donor';
+      }
+    }
 
     if (!user) {
-      return NextResponse.json({ error: 'Invalid CNIC or password' }, { status: 401 });
+      return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
+    }
+    
+    // Enforce approval for donors: only ACTIVE donors can log in
+    if (role === 'donor' && user.status !== 'ACTIVE') {
+      return NextResponse.json({ error: 'Your account is pending approval by admin.' }, { status: 403 });
     }
 
     // Compare passwords
@@ -30,17 +66,23 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Invalid CNIC or password' }, { status: 401 });
     }
 
-    // ✅ Clean CNIC for JWT
-    const cleanCnic = (user.cnic ?? "").replace(/-/g, "");
-
-    // Sign JWT token
+    // Sign JWT token with comprehensive details
     const token = jwt.sign(
-      { id: user.id, role: user.role, cnic: cleanCnic },
+      { 
+        id: user.id, 
+        role: user.role || role, 
+        cnic: user.cnic,
+        name: user.name,
+        email: user.email,
+        contact_number: user.contact_number || user.phone,
+        organization_name: user.organization_name,
+        created_at: user.created_at,
+      },
       JWT_SECRET,
       { expiresIn: "7d" }
     );
 
-    // ✅ Store token in cookie with same name everywhere
+    // ✅ Store token in cookie
     cookies().set('auth-token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
@@ -49,8 +91,10 @@ export async function POST(req: Request) {
       path: '/',
     });
 
-    // ✅ Return user in `{ user: ... }` format (suggestion 1)
-    return NextResponse.json({ user }, { status: 200 });
+    // Return a consistent user object structure
+    const { password: _, ...userWithoutPassword } = user;
+    const userWithRole = { ...userWithoutPassword, role };
+    return NextResponse.json({ user: userWithRole }, { status: 200 });
 
   } catch (error) {
     console.error('Login error:', error);

@@ -1,6 +1,6 @@
 // app/api/auth/signup/route.ts
 import { NextResponse } from 'next/server';
-import bcrypt from 'bcryptjs';
+import * as bcrypt from 'bcryptjs';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
@@ -19,7 +19,13 @@ export async function POST(req: Request) {
       phone,
     } = body;
 
-    const cleanedCnic = cnic.replace(/-/g, ''); // remove dashes
+    // Basic validation
+    if (!email || !password) {
+      return NextResponse.json({ error: 'Email and password are required' }, { status: 400 });
+    }
+
+    // Safely clean CNIC if provided
+    const cleanedCnic = typeof cnic === 'string' && cnic ? cnic.replace(/-/g, '') : undefined;
 
     // Check if user already exists
     const existingUser = await prisma.user.findUnique({
@@ -32,19 +38,23 @@ export async function POST(req: Request) {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create user with all fields
     // Prevent public signup from creating admin users
     if (role === 'admin') {
       return NextResponse.json({ error: 'Admin signup not allowed' }, { status: 403 });
     }
+
+    // Normalize role values to match Prisma enum (Role contains: user, donor, admin, SURVEY_OFFICER)
+    let normalizedRole: string = 'user';
+    if (role === 'donor') normalizedRole = 'donor';
+    else if (role === 'survey' || role === 'SURVEY_OFFICER') normalizedRole = 'SURVEY_OFFICER';
 
     const newUser = await prisma.user.create({
       data: {
         name,
         email,
         password: hashedPassword,
-        cnic: cleanedCnic,
-        role: role === 'donor' ? 'donor' : 'user',
+        cnic: cleanedCnic ?? undefined,
+        role: normalizedRole as any,
         address,
         city,
         phone,

@@ -10,7 +10,7 @@ export async function GET(request: Request) {
     // Admin: show all surveys for requests that have been forwarded to survey team
     surveys = await db.survey.findMany({
       where: { application: { forwardedToSurvey: true } },
-      include: { application: true, attachments: true },
+      include: { application: { include: { user: true } }, attachments: true },
       orderBy: { createdAt: "desc" },
     });
   } else {
@@ -18,7 +18,7 @@ export async function GET(request: Request) {
     const officerId = auth.user.id;
     surveys = await db.survey.findMany({
       where: { OR: [{ officerId: null }, { officerId }] },
-      include: { application: true, attachments: true },
+      include: { application: { include: { user: true } }, attachments: true },
       orderBy: { createdAt: "desc" },
     });
   }
@@ -65,7 +65,7 @@ export async function POST(request: Request) {
       updatedAt: new Date(),
       attachments: { create: normalizedAttachments.map((url) => ({ url })) },
     },
-    include: { application: true, attachments: true },
+    include: { application: { include: { user: true } }, attachments: true },
   })
 
   // If completed, mark request verification flag

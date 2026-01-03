@@ -28,10 +28,20 @@ const data = [
 ];
 
 export default function DashboardAnalytics() {
+  const [chartHeight, setChartHeight] = useState(250);
   const [dailyRequests, setDailyRequests] = useState<{ date: string, count: number }[]>([]);
   const [dailyByType, setDailyByType] = useState<any[]>([]);
   const [requestTypes, setRequestTypes] = useState<string[]>([]);
   const [signupsDaily, setSignupsDaily] = useState<{ date: string, count: number }[]>([]);
+
+  useEffect(() => {
+    const updateHeight = () => {
+      setChartHeight(window.innerWidth < 768 ? 200 : 250);
+    };
+    updateHeight();
+    window.addEventListener('resize', updateHeight);
+    return () => window.removeEventListener('resize', updateHeight);
+  }, []);
   useEffect(() => {
     async function fetchDaily() {
       const res = await fetch('/api/stats/requests-daily');
@@ -99,18 +109,18 @@ export default function DashboardAnalytics() {
   return (
     <>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-50">
-        {/* Hero Banner Section */}
-        <section className="relative overflow-hidden rounded-b-3xl shadow-xl mb-10 h-[70vh] flex flex-col items-center justify-center text-center">
+          {/* Hero Banner Section */}
+        <section className="relative overflow-hidden rounded-b-3xl shadow-xl mb-10 h-[80vh] flex flex-col items-center justify-center text-center">
           <div className="absolute inset-0 bg-white" />
           <div className="relative z-10 max-w-7xl mx-auto px-6 py-16 flex flex-col md:flex-row items-center gap-10">
             <div className="flex-1 text-white space-y-6">
-              <h1 className="text-4xl md:text-5xl font-extrabold leading-tight drop-shadow-lg">
+              <h1 className="text-4xl md:text-5xl font-extrabold leading-tight drop-shadow-lg mt-5">
                 <span className="text-[#1B0073]">Live </span>{" "}
                 <span className="text-[#00A5E0]">Welfare Programs</span>
                 <br />
               </h1>
               <span className="text-[#1B0073] font-bold text-4xl">Stats & Analytics Dashboard</span>
-              <p className="text-gray-600">
+              <p className="text-black">
                 Get real-time insights into all welfare requests, user signups, and platform activity. Visualize trends, monitor impact, and make data-driven decisions for a better tomorrow.
               </p>
               <div className="flex gap-4 mt-4">
@@ -134,48 +144,13 @@ export default function DashboardAnalytics() {
           <div className="absolute -bottom-20 left-1/2 -translate-x-1/2 w-[120vw] h-40 bg-gradient-to-t from-blue-100/60 to-transparent rounded-b-3xl z-0" />
         </section>
 
-        {/* Intro Section */}
-        <section className="max-w-4xl mx-auto px-4 mb-10">
-          <div className="bg-white/80 rounded-2xl shadow p-6 text-center">
-            <h2 className="text-2xl font-bold text-darkblue mb-2">Welcome to the Welfare Platform Analytics</h2>
-            <p className="text-gray-700 text-lg mb-2">Track every request, every user, and every impact—live and in detail. Our dashboard empowers you to see the real difference your organization is making, with beautiful charts and up-to-the-minute data.</p>
-            <p className="text-darkblue font-semibold">All stats update automatically. No refresh needed!</p>
-          </div>
-        </section>
-        {/* Key Metrics Section */}
-        <section className="max-w-7xl mx-auto px-4 mb-10">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {[{
-              label: 'Total Requests',
-              value: totalRequests.toLocaleString?.() ?? totalRequests,
-            }, {
-              label: 'Approved',
-              value: approvedCount.toLocaleString?.() ?? approvedCount,
-            }, {
-              label: 'Pending',
-              value: pendingCount.toLocaleString?.() ?? pendingCount,
-            }, {
-              label: 'Total Signups',
-              value: totalSignups.toLocaleString?.() ?? totalSignups,
-            }].map((m, idx) => (
-              <div key={idx} className="group relative rounded-2xl p-[1px] bg-gradient-to-br from-cyan-400/50 via-blue-500/40 to-indigo-600/50 shadow-[0_10px_30px_rgba(17,24,39,0.08)] hover:shadow-[0_20px_40px_rgba(17,24,39,0.12)] transition-shadow">
-                <div className="rounded-2xl bg-white/80 backdrop-blur-xl p-5">
-                  <div className="text-xs uppercase tracking-wide text-darkblue/80 mb-1">{m.label}</div>
-                  <div className="text-3xl font-extrabold text-darkblue">{m.value}</div>
-                  <div className="mt-3 h-[3px] w-0 bg-gradient-to-r from-blue-600 to-cyan-500 group-hover:w-full transition-all duration-700"></div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
         {/* Chart Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 max-w-7xl mx-auto px-4">
           {/* Day-wise Request Type Distribution (Stacked Bar) */}
           <div className="group relative rounded-2xl p-[1px] bg-gradient-to-br from-cyan-400/40 via-blue-500/30 to-indigo-600/40 shadow hover:shadow-lg transition-shadow">
             <div className="rounded-2xl bg-white/80 backdrop-blur p-4">
               <h2 className="text-lg font-semibold mb-4 text-center text-darkblue">Request Type Distribution (Day-wise)</h2>
-              <DayResponsiveContainer width="100%" height={250}>
+              <DayResponsiveContainer width="100%" height={chartHeight}>
                 <DayBarChart data={dailyByType.map(row => {
                   // flatten types array to keys
                   const out: any = { date: row.date };
@@ -197,7 +172,7 @@ export default function DashboardAnalytics() {
           <div className="group relative rounded-2xl p-[1px] bg-gradient-to-br from-cyan-400/40 via-blue-500/30 to-indigo-600/40 shadow hover:shadow-lg transition-shadow">
             <div className="rounded-2xl bg-white/80 backdrop-blur p-4">
               <h2 className="text-lg font-semibold mb-4 text-center text-darkblue">Requests per Day (Last 14 Days)</h2>
-              <DayResponsiveContainer width="100%" height={250}>
+              <DayResponsiveContainer width="100%" height={chartHeight}>
                 <DayBarChart data={dailyRequests}>
                   <DayXAxis dataKey="date" tick={{ fontSize: 12 }} />
                   <DayYAxis allowDecimals={false} />
@@ -211,7 +186,7 @@ export default function DashboardAnalytics() {
           <div className="group relative rounded-2xl p-[1px] bg-gradient-to-br from-cyan-400/40 via-blue-500/30 to-indigo-600/40 shadow hover:shadow-lg transition-shadow">
             <div className="rounded-2xl bg-white/80 backdrop-blur p-4">
               <h2 className="text-lg font-semibold mb-4 text-center text-darkblue">User Signups per Day</h2>
-              <DayResponsiveContainer width="100%" height={250}>
+              <DayResponsiveContainer width="100%" height={chartHeight}>
                 <SignupLineChart data={signupsDaily}>
                   <DayXAxis dataKey="date" tick={{ fontSize: 12 }} />
                   <DayYAxis allowDecimals={false} />

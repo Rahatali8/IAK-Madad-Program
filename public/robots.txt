@@ -1,0 +1,43 @@
+User-agent: *
+Allow: /
+
+# Allow all major search engines to crawl the site
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+User-agent: Baiduspider
+Allow: /
+
+User-agent: YandexBot
+Allow: /
+
+# Disallow admin and login areas
+Disallow: /admin/
+Disallow: /login
+Disallow: /signup
+Disallow: /dashboard/
+Disallow: /api/admin/
+Disallow: /api/auth/
+Disallow: /forgot-password
+
+# Allow access to CSS, JS, and image files
+Allow: *.css
+Allow: *.js
+Allow: *.png
+Allow: *.jpg
+Allow: *.jpeg
+Allow: *.gif
+Allow: *.svg
+Allow: *.ico
+
+# Sitemap location
+Sitemap: https://welfareplatform.org/sitemap.xml

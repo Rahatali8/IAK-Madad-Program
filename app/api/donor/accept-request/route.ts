@@ -1,34 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
-import jwt from 'jsonwebtoken';
-import { cookies } from 'next/headers';
+import { verifyAuth } from '@/lib/auth';
 
-const prisma = new PrismaClient();
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+export async function POST(request: NextRequest) {
+  const authResult = await verifyAuth(request);
 
-export async function POST(req: NextRequest) {
+  if (!authResult.success || authResult.user.role !== 'donor') {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  }
+
   try {
-    const token = cookies().get('auth-token')?.value;
-    if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    const decoded = jwt.verify(token, JWT_SECRET) as { id: number };
-    const { requestId, amount } = await req.json();
-    if (!requestId || !amount || isNaN(amount) || amount <= 0) {
-      return NextResponse.json({ error: 'Invalid data' }, { status: 400 });
+    const body = await request.json();
+    const { requestId, donorId } = body;
+
+    if (!requestId || !donorId) {
+      return NextResponse.json({ error: 'Missing requestId or donorId' }, { status: 400 });
     }
-    // Mark request as accepted (approved) and create a donation
-    await prisma.request.update({
-      where: { id: requestId },
-      data: { status: 'approved' },
-    });
-    await prisma.donation.create({
-      data: {
-        userId: decoded.id,
-        amount: Number(amount),
-      },
-    });
-    return NextResponse.json({ message: 'Request accepted and donation recorded' });
-  } catch (err) {
-    console.error(err);
-    return NextResponse.json({ error: 'Server error' }, { status: 500 });
+
+    // This is a dummy implementation.
+    // In a real scenario, this is where you would update the database
+    // to associate the donor with the request.
+    console.log(`Dummy: Donor ${donorId} accepted request ${requestId}`);
+
+    return NextResponse.json({ success: true, message: 'Request accepted successfully (dummy response)' });
+
+  } catch (error) {
+    console.error('Error in accept-request:', error);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
